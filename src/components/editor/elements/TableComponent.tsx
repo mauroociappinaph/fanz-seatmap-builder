@@ -3,23 +3,36 @@ import React from "react";
 import { Table } from "@/domain/types";
 import { SeatComponent } from "./SeatComponent";
 import { useSeatMapStore } from "@/store";
+import { useViewport } from "@/hooks/useViewport";
 
 interface TableComponentProps {
   table: Table;
 }
 
 export const TableComponent: React.FC<TableComponentProps> = ({ table }) => {
-  const { selectedIds, toggleSelection } = useSeatMapStore();
+  const { selectedIds, toggleSelection, startDragging, setActiveTool } =
+    useSeatMapStore();
+  const { screenToSVG } = useViewport();
   const isSelected = selectedIds.includes(table.id);
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const svg = e.currentTarget.ownerSVGElement;
+    if (svg) {
+      const pos = screenToSVG(e.clientX, e.clientY, svg);
+      startDragging(table.id, pos);
+      if (!isSelected) {
+        toggleSelection(table.id);
+      }
+      setActiveTool("select");
+    }
+  };
 
   return (
     <g
       transform={`translate(${table.position.x}, ${table.position.y}) rotate(${table.rotation})`}
-      className="group"
-      onClick={(e) => {
-        e.stopPropagation();
-        toggleSelection(table.id);
-      }}
+      onMouseDown={onMouseDown}
+      className="group cursor-move"
     >
       {/* Table Surface */}
       {table.shape === "round" ? (

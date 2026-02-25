@@ -67,6 +67,8 @@ export interface EditorState {
   seatMap: SeatMap;
   selectedIds: string[];
   activeTool: "select" | "addRow" | "addTable" | "addArea";
+  draggingId: string | null;
+  lastMousePosition: Position | null;
 
   // Acciones
   newMap: () => void;
@@ -80,7 +82,13 @@ export interface EditorState {
   importJSON: (json: string) => void;
   applyBulkLabels: (pattern: string) => void;
   updateViewport: (updates: Partial<ViewportState>) => void;
-  addRow: () => void;
-  addTable: () => void;
-  addArea: () => void;
+
+  // Acciones para Tarea 8
+  setActiveTool: (tool: EditorState["activeTool"]) => void;
+  startDragging: (id: string, position: Position) => void;
+  stopDragging: () => void;
+  handleDragMove: (position: Position) => void;
+  addRow: (pos?: Position) => void;
+  addTable: (pos?: Position) => void;
+  addArea: (pos?: Position) => void;
 }

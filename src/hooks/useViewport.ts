@@ -52,11 +52,30 @@ export const useViewport = () => {
     isPanning.current = false;
   }, []);
 
+  const screenToSVG = useCallback(
+    (clientX: number, clientY: number, svgElement: SVGSVGElement) => {
+      const CTM = svgElement.getScreenCTM();
+      if (!CTM) return { x: 0, y: 0 };
+
+      // clientX/Y are screen relative. getScreenCTM gives us the matrix
+      // to go from SVG space to screen space. We invert it to go the other way.
+      const inverseCTM = CTM.inverse();
+      const pt = svgElement.createSVGPoint();
+      pt.x = clientX;
+      pt.y = clientY;
+
+      const svgPt = pt.matrixTransform(inverseCTM);
+      return { x: svgPt.x, y: svgPt.y };
+    },
+    [],
+  );
+
   return {
     viewport,
     handleWheel,
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
+    screenToSVG,
   };
 };

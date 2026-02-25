@@ -70,7 +70,7 @@
 
 #### Tarea 7: Panel de Inspector y Propiedades
 - **Objetivo:** Permitir la edición de propiedades de los elementos como etiquetas y dimensiones.
-- [ ] Crear `src/components/ui/Inspector.tsx` para mostrar y editar las propiedades de los elementos seleccionados.
+- [x] Crear `src/components/ui/Inspector.tsx` con campos reactivos para mostrar y editar las propiedades de los elementos seleccionados.
 
 #### Tarea 8: Flujo de Colocación de Elementos y Drag to Move
 - **Objetivo:** Implementar la interacción principal para posicionar elementos en el canvas.

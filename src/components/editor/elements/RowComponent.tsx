@@ -3,19 +3,36 @@ import React from "react";
 import { Row } from "@/domain/types";
 import { SeatComponent } from "./SeatComponent";
 import { useSeatMapStore } from "@/store";
+import { useViewport } from "@/hooks/useViewport";
 
 interface RowComponentProps {
   row: Row;
 }
 
 export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
-  const { selectedIds, toggleSelection } = useSeatMapStore();
+  const { selectedIds, toggleSelection, startDragging, setActiveTool } =
+    useSeatMapStore();
+  const { screenToSVG } = useViewport();
   const isSelected = selectedIds.includes(row.id);
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Evita que el click llegue al fondo del SVG
+    const svg = e.currentTarget.ownerSVGElement;
+    if (svg) {
+      const pos = screenToSVG(e.clientX, e.clientY, svg);
+      startDragging(row.id, pos);
+      if (!isSelected) {
+        toggleSelection(row.id);
+      }
+      setActiveTool("select");
+    }
+  };
 
   return (
     <g
       transform={`translate(${row.position.x}, ${row.position.y}) rotate(${row.rotation})`}
-      className="group"
+      onMouseDown={onMouseDown}
+      className="group cursor-move"
     >
       {/* Visual bounding box for selection if needed */}
       {isSelected && (

@@ -144,13 +144,56 @@ export const useSeatMapStore = create<EditorState>()(
         }));
       },
 
-      addRow: () => {
+      draggingId: null,
+      lastMousePosition: null,
+
+      setActiveTool: (tool) => set({ activeTool: tool }),
+
+      startDragging: (id, position) => {
+        set({ draggingId: id, lastMousePosition: position });
+      },
+
+      stopDragging: () => {
+        set({ draggingId: null, lastMousePosition: null });
+      },
+
+      handleDragMove: (position) => {
+        const { draggingId, lastMousePosition, seatMap } = get();
+        if (!draggingId || !lastMousePosition) return;
+
+        const dx = position.x - lastMousePosition.x;
+        const dy = position.y - lastMousePosition.y;
+
+        const element = seatMap.elements.find((el) => el.id === draggingId);
+        if (element && "position" in element) {
+          get().moveElement(draggingId, {
+            x: element.position.x + dx,
+            y: element.position.y + dy,
+          });
+        } else if (element && element.type === "area") {
+          // Special handling for areas (polygons)
+          const newPoints = element.points.map((p) => ({
+            x: p.x + dx,
+            y: p.y + dy,
+          }));
+          get().updateElement(draggingId, { points: newPoints });
+        }
+
+        set({ lastMousePosition: position });
+      },
+
+      addRow: (pos) => {
         const { viewport } = get().seatMap;
+        const position = pos || {
+          x: viewport.panX + 100,
+          y: viewport.panY + 100,
+        };
+
         const newRow: Row = {
           id: `row-${crypto.randomUUID()}`,
           type: "row",
           label: "Nueva Fila",
-          position: { x: viewport.panX + 50, y: viewport.panY + 50 },
+          position,
           rotation: 0,
           seatSpacing: 30,
           seats: [
@@ -174,15 +217,21 @@ export const useSeatMapStore = create<EditorState>()(
         };
         get().addElement(newRow);
         get().setSelection([newRow.id]);
+        get().setActiveTool("select");
       },
 
-      addTable: () => {
+      addTable: (pos) => {
         const { viewport } = get().seatMap;
+        const position = pos || {
+          x: viewport.panX + 200,
+          y: viewport.panY + 200,
+        };
+
         const newTable: Table = {
           id: `table-${crypto.randomUUID()}`,
           type: "table",
           label: "T",
-          position: { x: viewport.panX + 200, y: viewport.panY + 200 },
+          position,
           rotation: 0,
           shape: "round",
           width: 80,
@@ -191,30 +240,38 @@ export const useSeatMapStore = create<EditorState>()(
         };
         get().addElement(newTable);
         get().setSelection([newTable.id]);
+        get().setActiveTool("select");
       },
 
-      addArea: () => {
+      addArea: (pos) => {
         const { viewport } = get().seatMap;
-        const px = viewport.panX + 100;
-        const py = viewport.panY + 100;
+        const startPos = pos || {
+          x: viewport.panX + 150,
+          y: viewport.panY + 150,
+        };
+
         const newArea: Area = {
           id: `area-${crypto.randomUUID()}`,
           type: "area",
           label: "Nueva Área",
           points: [
-            { x: px, y: py },
-            { x: px + 100, y: py },
-            { x: px + 100, y: py + 100 },
-            { x: px, y: py + 100 },
+            { x: startPos.x, y: startPos.y },
+            { x: startPos.x + 150, y: startPos.y },
+            { x: startPos.x + 150, y: startPos.y + 100 },
+            { x: startPos.x, y: startPos.y + 100 },
           ],
           color: "rgba(59, 130, 246, 0.2)",
         };
         get().addElement(newArea);
         get().setSelection([newArea.id]);
+        get().setActiveTool("select");
       },
     }),
     {
       name: "fanz-seatmap-storage",
+      partialize: (state) => ({
+        seatMap: state.seatMap,
+      }),
     },
   ),
 );

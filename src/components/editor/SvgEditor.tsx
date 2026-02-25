@@ -3,16 +3,29 @@
 
 import React from "react";
 import { useViewport } from "@/hooks/useViewport";
+import { useSeatMapStore } from "@/store";
 import { MapElements } from "./MapElements";
 
 export const SvgEditor: React.FC = () => {
+  const svgRef = React.useRef<SVGSVGElement>(null);
   const {
     viewport,
     handleWheel,
-    handleMouseDown,
-    handleMouseMove,
-    handleMouseUp,
+    handleMouseDown: viewportMouseDown,
+    handleMouseMove: viewportMouseMove,
+    handleMouseUp: viewportMouseUp,
+    screenToSVG,
   } = useViewport();
+
+  const {
+    activeTool,
+    addRow,
+    addTable,
+    addArea,
+    handleDragMove,
+    stopDragging,
+    draggingId,
+  } = useSeatMapStore();
 
   // Debería ser dinámico basado en el contenedor
   const width = 1200;
@@ -22,17 +35,49 @@ export const SvgEditor: React.FC = () => {
   const vbHeight = height / viewport.zoom;
   const viewBox = `${viewport.panX} ${viewport.panY} ${vbWidth} ${vbHeight}`;
 
+  const onMouseDown = (e: React.MouseEvent) => {
+    // Si hay una herramienta de creación activa, colocamos el elemento
+    if (activeTool !== "select" && svgRef.current) {
+      const pos = screenToSVG(e.clientX, e.clientY, svgRef.current);
+      if (activeTool === "addRow") addRow(pos);
+      if (activeTool === "addTable") addTable(pos);
+      if (activeTool === "addArea") addArea(pos);
+      return;
+    }
+
+    viewportMouseDown(e);
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (draggingId && svgRef.current) {
+      const pos = screenToSVG(e.clientX, e.clientY, svgRef.current);
+      handleDragMove(pos);
+      return;
+    }
+
+    viewportMouseMove(e);
+  };
+
+  const onMouseUp = () => {
+    if (draggingId) {
+      stopDragging();
+      return;
+    }
+    viewportMouseUp();
+  };
+
   return (
     <div className="relative w-full h-full overflow-hidden select-none bg-[#fefefe]">
       <svg
+        ref={svgRef}
         width="100%"
         height="100%"
         viewBox={viewBox}
         onWheel={handleWheel}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onMouseLeave={onMouseUp}
         className="cursor-crosshair block"
         xmlns="http://www.w3.org/2000/svg"
       >

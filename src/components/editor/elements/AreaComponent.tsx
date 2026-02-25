@@ -2,26 +2,36 @@
 import React from "react";
 import { Area } from "@/domain/types";
 import { useSeatMapStore } from "@/store";
+import { useViewport } from "@/hooks/useViewport";
 
 interface AreaComponentProps {
   area: Area;
 }
 
 export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
-  const { selectedIds, toggleSelection } = useSeatMapStore();
+  const { selectedIds, toggleSelection, startDragging, setActiveTool } =
+    useSeatMapStore();
+  const { screenToSVG } = useViewport();
   const isSelected = selectedIds.includes(area.id);
 
   // Convert points array to SVG polygon string
   const pointsString = area.points.map((p) => `${p.x},${p.y}`).join(" ");
 
-  return (
-    <g
-      className="group"
-      onClick={(e) => {
-        e.stopPropagation();
+  const onMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const svg = e.currentTarget.ownerSVGElement;
+    if (svg) {
+      const pos = screenToSVG(e.clientX, e.clientY, svg);
+      startDragging(area.id, pos);
+      if (!isSelected) {
         toggleSelection(area.id);
-      }}
-    >
+      }
+      setActiveTool("select");
+    }
+  };
+
+  return (
+    <g onMouseDown={onMouseDown} className="group cursor-move">
       <polygon
         points={pointsString}
         fill={area.color || "rgba(59, 130, 246, 0.1)"}
