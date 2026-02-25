@@ -71,4 +71,39 @@ describe("useSeatMapStore", () => {
     useSeatMapStore.getState().toggleSelection("element-1");
     expect(useSeatMapStore.getState().selectedIds).not.toContain("element-1");
   });
+
+  it("should apply bulk labels to selected elements", () => {
+    const row1: Row = {
+      id: "row-1",
+      type: "row",
+      label: "Old Label 1",
+      position: { x: 0, y: 0 },
+      rotation: 0,
+      seats: [],
+      seatSpacing: 0,
+    };
+    const row2: Row = {
+      id: "row-2",
+      type: "row",
+      label: "Old Label 2",
+      position: { x: 0, y: 0 },
+      rotation: 0,
+      seats: [],
+      seatSpacing: 0,
+    };
+
+    useSeatMapStore.getState().addElement(row1);
+    useSeatMapStore.getState().addElement(row2);
+    useSeatMapStore.getState().setSelection(["row-1", "row-2"]);
+
+    useSeatMapStore.getState().applyBulkLabels("Sector-{A..B}");
+
+    const { seatMap } = useSeatMapStore.getState();
+    expect(seatMap.elements.find((el) => el.id === "row-1")?.label).toBe(
+      "Sector-A",
+    );
+    expect(seatMap.elements.find((el) => el.id === "row-2")?.label).toBe(
+      "Sector-B",
+    );
+  });
 });

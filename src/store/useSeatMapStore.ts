@@ -1,7 +1,7 @@
-// src/store/useSeatMapStore.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { EditorState, MapElement, Position, SeatMap } from "@/domain/types";
+import { parsePattern } from "@/services/labeling";
 
 const initialSeatMap: SeatMap = {
   id: "new-map",
@@ -102,6 +102,27 @@ export const useSeatMapStore = create<EditorState>()(
         } catch (error) {
           console.error("Failed to import JSON:", error);
         }
+      },
+
+      applyBulkLabels: (pattern: string) => {
+        const labels = parsePattern(pattern);
+        const { selectedIds, seatMap } = get();
+
+        set({
+          seatMap: {
+            ...seatMap,
+            elements: seatMap.elements.map((el) => {
+              if (selectedIds.includes(el.id)) {
+                const index = selectedIds.indexOf(el.id);
+                // Cycle through labels if there are more elements than labels
+                const label = labels[index % labels.length];
+                return { ...el, label } as MapElement;
+              }
+              return el;
+            }),
+            updatedAt: new Date().toISOString(),
+          },
+        });
       },
     }),
     {

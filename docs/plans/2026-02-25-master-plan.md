@@ -1,7 +1,8 @@
 # Fanz SeatMapBuilder - Plan Maestro de Implementación (V4.4 - SVG Nativo)
 
 > **Para Claude:** SUB-SKILL REQUERIDA: Usar superpowers:executing-plans para implementar este plan tarea por tarea.
-> **AI TRACKING:** Actualizar `prompts.jsonl` después de completar cada tarea.
+> **AI TRACKING:** Actualizar `prompts.jsonl` después de completar cada tarea siguiendo esta estructura obligatoria:
+> `{ "timestamp": "ISO-8601", "tool/model": "string", "purpose": "string", "prompt": "string", "response_summary": "string", "notes": "string" }`
 
 **Objetivo:** Construir un editor de mapas de asientos interactivo de grado de producción utilizando SVG nativo para los gráficos, aplicando SRP, DRY, Archivos Barrel, usando Jest para pruebas, incorporando etiquetado detallado por patrones, registro de interacciones de IA, un modelo de dominio concreto y un flujo de trabajo robusto de Git/GitHub.
 
@@ -11,29 +12,29 @@
 
 #### Tarea 0: Andamiaje del Proyecto y Estándares de Ingeniería
 - **Objetivo:** Inicializar el proyecto Next.js con TypeScript, Jest, Husky, GitHub Actions y estándares de código forzados.
-- [ ] Inicializar Next.js 14 App con TypeScript (`npx create-next-app@latest . --ts --eslint --app --src-dir --import-alias "@/*"`).
-- [ ] Instalar dependencias: `zustand`, `lucide-react`, `sonner`, `clsx`, `tailwind-merge`.
-- [ ] Configurar **Jest** y React Testing Library.
-- [ ] Configurar **Husky** y `lint-staged` en `package.json`.
-- [ ] Implementar **Barrel Files** (`index.ts`) en los directorios iniciales de `src/`.
-- [ ] Crear `.github/workflows/ci.yml`.
-- [ ] Crear `prompts.jsonl` y registrar los prompts iniciales de configuración.
+- [x] Inicializar Next.js 14 App con TypeScript (`npx create-next-app@latest . --ts --eslint --app --src-dir --import-alias "@/*"`).
+- [x] Instalar dependencias: `zustand`, `lucide-react`, `sonner`, `clsx`, `tailwind-merge`.
+- [x] Configurar **Jest** y React Testing Library.
+- [x] Configurar **Husky** y `lint-staged` en `package.json`.
+- [x] Implementar **Barrel Files** (`index.ts`) en los directorios iniciales de `src/`.
+- [x] Crear `.github/workflows/ci.yml`.
+- [x] Crear `prompts.jsonl` y registrar los prompts iniciales de configuración.
 
 #### Tarea 0.5: Repositorio Git y Estrategia de Ramas
 - **Objetivo:** Configurar el repositorio Git local y definir la estrategia de ramas.
-- [ ] Inicializar repositorio Git local (`git init`).
-- [ ] Configurar Git para usar Conventional Commits.
-- [ ] Definir estrategia de ramas de características (ej: `feat/task-description`).
+- [x] Inicializar repositorio Git local (`git init`).
+- [x] Configurar Git para usar Conventional Commits.
+- [x] Definir estrategia de ramas de características (ej: `feat/task-description`).
 
 #### Tarea 1: Modelo de Dominio y Estado Global (Enfoque SRP y DRY)
 - **Objetivo:** Implementar el store de Zustand basado en los tipos `SeatMap` y `EditorState` definidos en `SPEC.md`.
-- [ ] Crear `src/store/useSeatMapStore.ts` usando el patrón de Acciones Inmutables.
-- [ ] Escribir pruebas unitarias en Jest para todas las acciones del store.
+- [x] Crear `src/store/useSeatMapStore.ts` usando el patrón de Acciones Inmutables.
+- [x] Escribir pruebas unitarias en Jest para todas las acciones del store.
 
 #### Tarea 2: Servicios de Persistencia
 - **Objetivo:** Implementar importación/exportación JSON confiable sin pérdida de datos.
-- [ ] Implementar `src/services/persistence/jsonMapper.ts` con validación de esquema.
-- [ ] Escribir pruebas Jest para asegurar la integridad de los datos en el ciclo de exportación/importación.
+- [x] Implementar `src/services/persistence/jsonMapper.ts` con validación de esquema.
+- [x] Escribir pruebas Jest para asegurar la integridad de los datos en el ciclo de exportación/importación.
 
 ---
 

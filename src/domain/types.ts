@@ -72,4 +72,5 @@ export interface EditorState {
   toggleSelection: (id: string) => void;
   exportJSON: () => string;
   importJSON: (json: string) => void;
+  applyBulkLabels: (pattern: string) => void;
 }
