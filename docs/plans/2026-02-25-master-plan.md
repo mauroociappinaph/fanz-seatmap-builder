@@ -42,9 +42,9 @@
 
 #### Tarea 3: Motor de Etiquetado por Lotes (TDD OBLIGATORIO)
 - **Objetivo:** Implementar un etiquetado robusto basado en patrones para filas, asientos, áreas y mesas.
-- [ ] Escribir pruebas Jest para patrones: `A{1..10}`, `{A..Z}{1..5}`, `Sector {n}`, `Table {A..C}-{1..4}`.
-- [ ] Implementar `src/services/labeling/patternParser.ts` basado en los casos de prueba.
-- [ ] Integrar el parser en el store para actualizaciones masivas.
+- [x] Escribir pruebas Jest para patrones: `A{1..10}`, `{A..Z}{1..5}`, `Sector {n}`, `Table {A..C}-{1..4}`.
+- [x] Implementar `src/services/labeling/patternParser.ts` basado en los casos de prueba.
+- [x] Integrar el parser en el store para actualizaciones masivas.
 
 #### Tarea 4: Canvas SVG y Viewport (Pan/Zoom)
 - **Objetivo:** Proporcionar un área de dibujo suave y navegable para el mapa de asientos usando SVG nativo.
