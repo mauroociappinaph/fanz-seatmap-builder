@@ -1,79 +1,140 @@
+// src/app/page.tsx
 import { SvgEditor } from "@/components/editor";
 import { Toaster } from "sonner";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col bg-[#020617] text-slate-200">
-      {/* Premium Navbar */}
-      <nav className="z-50 flex items-center justify-between px-8 py-4 glass-dark border-b border-slate-800/50 sticky top-0">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-            <span className="text-white font-bold text-xs italic">F</span>
+    <main className="flex flex-col h-screen bg-slate-50 text-slate-900 overflow-hidden">
+      {/* SaaS Navbar */}
+      <nav className="z-50 flex items-center justify-between px-6 py-3 bg-white border-b border-slate-200">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 bg-blue-600 rounded flex items-center justify-center">
+              <span className="text-white font-bold text-xs italic">F</span>
+            </div>
+            <h1 className="text-lg font-semibold tracking-tight text-slate-800">
+              Fanz <span className="text-blue-600 font-semibold">SeatMap</span>
+            </h1>
           </div>
-          <h1 className="text-xl font-semibold text-white tracking-tight">
-            Fanz <span className="text-blue-500 font-medium">SeatMap</span>{" "}
-            <span className="text-slate-500 font-light">Builder</span>
-          </h1>
+          <div className="h-4 w-px bg-slate-300 mx-2" />
+          <span className="text-xs font-medium text-slate-400 uppercase tracking-widest">
+            Editor
+          </span>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full">
-            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">
-              v0.1.0-alpha
-            </span>
+        <div className="flex items-center gap-3">
+          <button className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-md transition-all">
+            Draft Map
+          </button>
+          <div className="flex items-center gap-2">
+            <button className="px-4 py-1.5 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 text-xs font-semibold rounded shadow-sm transition-all">
+              Save as JSON
+            </button>
+            <button className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded shadow-sm transition-all">
+              Publish
+            </button>
           </div>
-          <button className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-medium rounded-lg border border-slate-700 transition-all">
-            Docs
-          </button>
-          <button className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium rounded-lg shadow-lg shadow-blue-600/20 transition-all">
-            Export JSON
-          </button>
         </div>
       </nav>
 
-      {/* Hero / Stage Area */}
-      <div className="flex-1 flex flex-col p-6 lg:p-10 gap-6">
-        <div className="relative w-full flex-1 rounded-3xl overflow-hidden border border-slate-800/50 shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] bg-slate-900">
-          {/* Ambient Glows */}
-          <div className="absolute top-0 left-1/4 w-1/2 h-1/2 bg-blue-500/5 blur-[120px] pointer-events-none" />
-          <div className="absolute bottom-0 right-1/4 w-1/3 h-1/3 bg-indigo-500/5 blur-[100px] pointer-events-none" />
-
-          <SvgEditor />
-        </div>
-
-        {/* Footer / Info Bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 px-2 tracking-tight">
-          <div className="flex items-center gap-8 text-[11px] font-medium text-slate-500 uppercase tracking-[0.15em]">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center justify-center w-5 h-5 rounded border border-slate-800 bg-slate-900/50">
-                M
-              </span>
-              <span>Middle Mouse to Pan</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="flex items-center justify-center px-1.5 py-0.5 rounded border border-slate-800 bg-slate-900/50">
-                ALT
-              </span>
-              <span>+ Click to Pan</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="flex items-center justify-center w-5 h-5 rounded border border-slate-800 bg-slate-900/50">
-                S
-              </span>
-              <span>Scroll to Zoom</span>
+      {/* Main Layout Area */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left Sidebar: Tools */}
+        <aside className="w-64 bg-white border-r border-slate-200 flex flex-col p-4 gap-4 overflow-y-auto">
+          <div className="space-y-4">
+            <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              Add Elements
+            </h3>
+            <div className="grid grid-cols-2 gap-2">
+              <button className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all gap-2 group">
+                <div className="p-2 bg-slate-100 rounded group-hover:bg-blue-100">
+                  <div className="w-4 h-4 bg-slate-400 group-hover:bg-blue-500 rounded-sm" />
+                </div>
+                <span className="text-[10px] font-semibold text-slate-600">
+                  Row
+                </span>
+              </button>
+              <button className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all gap-2 group">
+                <div className="p-2 bg-slate-100 rounded group-hover:bg-blue-100">
+                  <div className="w-4 h-4 rounded-full bg-slate-400 group-hover:bg-blue-500" />
+                </div>
+                <span className="text-[10px] font-semibold text-slate-600">
+                  Table
+                </span>
+              </button>
+              <button className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all gap-2 group">
+                <div className="p-2 bg-slate-100 rounded group-hover:bg-blue-100">
+                  <div className="w-4 h-4 border-2 border-slate-400 group-hover:border-blue-500 rounded-sm" />
+                </div>
+                <span className="text-[10px] font-semibold text-slate-600">
+                  Area
+                </span>
+              </button>
+              <button className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all gap-2 group">
+                <div className="p-2 bg-slate-100 rounded group-hover:bg-blue-100">
+                  <div className="w-4 h-4 bg-slate-400 group-hover:bg-blue-500 rounded-[2px] opacity-40 shrink-0" />
+                </div>
+                <span className="text-[10px] font-semibold text-slate-600">
+                  Shapes
+                </span>
+              </button>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-[10px] font-bold text-slate-600 uppercase tracking-widest">
-            <span>Precision: SVG v1.1</span>
-            <span className="w-1 h-1 bg-slate-800 rounded-full" />
-            <span>Mode: Advanced Layout</span>
+          <div className="mt-auto p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+              <span className="text-[10px] uppercase font-bold text-slate-500">
+                Editor Help
+              </span>
+            </div>
+            <p className="text-[10px] leading-relaxed text-slate-400 font-medium">
+              Click elements to select. <br />
+              Drag with middle mouse to move camera.
+            </p>
           </div>
-        </div>
+        </aside>
+
+        {/* Center Canvas */}
+        <section className="flex-1 bg-slate-100 relative">
+          <div className="absolute inset-0 bg-white">
+            <SvgEditor />
+          </div>
+        </section>
+
+        {/* Right Sidebar: Inspector */}
+        <aside className="w-72 bg-white border-l border-slate-200 flex flex-col overflow-y-auto">
+          <div className="p-4 border-b border-slate-200">
+            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-widest">
+              Properties
+            </h3>
+          </div>
+          <div className="p-6 flex flex-col items-center justify-center text-center gap-4 mt-20">
+            <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-300">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+              </svg>
+            </div>
+            <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">
+              No element selected
+            </p>
+          </div>
+        </aside>
       </div>
 
-      <Toaster position="top-right" richColors theme="dark" />
+      <Toaster position="top-right" richColors />
     </main>
   );
 }

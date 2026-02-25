@@ -54,8 +54,9 @@
 
 #### Tarea 5: Renderizado de Elementos Visuales SVG
 - **Objetivo:** Renderizar todos los elementos del dominio con precisión usando componentes SVG nativos.
-- [ ] Implementar componentes SVG para `Row`, `Seat`, `Area`, `Table` según los tipos de `SPEC.md`.
-- [ ] Asegurar que las etiquetas obligatorias sean visibles e interactivas al pasar el mouse o seleccionar.
+- [x] Crear componentes especializados: `RowComponent`, `SeatComponent`, `TableComponent`, `AreaComponent`.
+- [x] Implementar lógica de estados visuales: hover, selección (stroke azul, grosor mayor), ocupado vs disponible.
+- [x] Sincronizar coordenadas de los subcomponentes con el sistema de coordenadas de su contenedor.
 
 ---
 

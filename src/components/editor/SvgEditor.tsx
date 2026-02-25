@@ -23,7 +23,7 @@ export const SvgEditor: React.FC = () => {
   const viewBox = `${viewport.panX} ${viewport.panY} ${vbWidth} ${vbHeight}`;
 
   return (
-    <div className="relative w-full h-full overflow-hidden select-none">
+    <div className="relative w-full h-full overflow-hidden select-none bg-[#fefefe]">
       <svg
         width="100%"
         height="100%"
@@ -33,22 +33,34 @@ export const SvgEditor: React.FC = () => {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        className="cursor-crosshair block bg-[#020617]"
+        className="cursor-crosshair block"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          {/* Main Grid Pattern */}
+          {/* Subtle SaaS Grid */}
           <pattern
             id="grid-minor"
             width="20"
             height="20"
             patternUnits="userSpaceOnUse"
           >
-            <path
-              d="M 20 0 L 0 0 0 20"
+            <line
+              x1="20"
+              y1="0"
+              x2="0"
+              y2="0"
               fill="none"
-              stroke="rgba(255,255,255,0.03)"
-              strokeWidth="0.5"
+              stroke="#f1f5f9"
+              strokeWidth="1"
+            />
+            <line
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="20"
+              fill="none"
+              stroke="#f1f5f9"
+              strokeWidth="1"
             />
           </pattern>
           <pattern
@@ -61,68 +73,62 @@ export const SvgEditor: React.FC = () => {
             <path
               d="M 100 0 L 0 0 0 100"
               fill="none"
-              stroke="rgba(255,255,255,0.08)"
+              stroke="#e2e8f0"
               strokeWidth="1"
             />
           </pattern>
         </defs>
 
-        {/* Technical Background */}
+        {/* Infinite Background Grid */}
         <rect
-          x={viewport.panX - 5000}
-          y={viewport.panY - 5000}
-          width={vbWidth + 10000}
-          height={vbHeight + 10000}
+          x={viewport.panX - 10000}
+          y={viewport.panY - 10000}
+          width={vbWidth + 20000}
+          height={vbHeight + 20000}
           fill="url(#grid-major)"
         />
 
-        {/* Origin Marker */}
-        <g opacity="0.2">
-          <line x1="-20" y1="0" x2="20" y2="0" stroke="white" strokeWidth="1" />
-          <line x1="0" y1="-20" x2="0" y2="20" stroke="white" strokeWidth="1" />
+        {/* Axis Crosshair (very subtle) */}
+        <g opacity="0.3">
+          <line
+            x1="-50"
+            y1="0"
+            x2="50"
+            y2="0"
+            stroke="#94a3b8"
+            strokeWidth="0.5"
+          />
+          <line
+            x1="0"
+            y1="-50"
+            x2="0"
+            y2="50"
+            stroke="#94a3b8"
+            strokeWidth="0.5"
+          />
         </g>
 
         <MapElements />
       </svg>
 
-      {/* HUD Float Overlay */}
-      <div className="absolute top-6 left-6 flex items-center gap-3 p-1 pl-4 glass-dark rounded-xl pointer-events-none">
-        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest border-r border-slate-700 pr-3">
-          Viewport
-        </span>
-        <div className="flex gap-4 pr-3">
-          <div className="flex flex-col">
-            <span className="text-[8px] uppercase text-slate-600 font-bold tracking-tighter">
-              Zoom
-            </span>
-            <span className="text-xs font-mono text-blue-400 leading-none">
-              {(viewport.zoom * 100).toFixed(0)}%
-            </span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[8px] uppercase text-slate-600 font-bold tracking-tighter">
-              Pos X
-            </span>
-            <span className="text-xs font-mono text-slate-300 leading-none">
-              {viewport.panX.toFixed(0)}
-            </span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[8px] uppercase text-slate-600 font-bold tracking-tighter">
-              Pos Y
-            </span>
-            <span className="text-xs font-mono text-slate-300 leading-none">
-              {viewport.panY.toFixed(0)}
-            </span>
-          </div>
+      {/* SaaS Style Viewport Info */}
+      <div className="absolute bottom-6 right-6 flex items-center gap-4 bg-white/90 backdrop-blur border border-slate-200 px-4 py-2 rounded-lg shadow-sm">
+        <div className="flex flex-col gap-0.5">
+          <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">
+            Position
+          </span>
+          <span className="text-xs font-mono text-slate-600">
+            {viewport.panX.toFixed(0)}, {viewport.panY.toFixed(0)}
+          </span>
         </div>
-      </div>
-
-      {/* Axis Marker HUD */}
-      <div className="absolute bottom-6 left-6 pointer-events-none">
-        <div className="flex items-center gap-2 text-[9px] font-bold text-blue-500/50 tracking-widest bg-blue-500/5 px-2 py-1 rounded-md border border-blue-500/10 uppercase">
-          <div className="w-1 h-3 bg-blue-500/40 rounded-full" />
-          Active Coordinate System: Cartesiano SV v1
+        <div className="w-px h-6 bg-slate-200" />
+        <div className="flex flex-col gap-0.5">
+          <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">
+            Zoom
+          </span>
+          <span className="text-xs font-mono text-blue-600 font-bold">
+            {(viewport.zoom * 100).toFixed(0)}%
+          </span>
         </div>
       </div>
     </div>

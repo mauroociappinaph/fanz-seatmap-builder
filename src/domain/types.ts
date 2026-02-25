@@ -36,7 +36,7 @@ export interface Seat {
   id: string;
   type: "seat";
   label: string; // Obligatorio (ej: A1, A2)
-  status: "available" | "selected" | "blocked";
+  status: "available" | "selected" | "blocked" | "occupied";
   // posición relativa a la fila o mesa
   cx: number;
   cy: number;
@@ -46,8 +46,8 @@ export interface Area {
   id: string;
   type: "area";
   label: string; // Obligatorio
-  path: string; // Datos del path SVG
-  position: Position;
+  points: Position[]; // Lista de puntos para el polígono
+  color?: string; // Color de relleno opcional
 }
 
 export interface Table {
@@ -55,11 +55,11 @@ export interface Table {
   type: "table";
   label: string; // Obligatorio
   position: Position;
+  rotation: number;
   shape: "round" | "rectangular";
   seats: Seat[];
-  radius?: number; // Para forma 'round'
-  width?: number; // Para forma 'rectangular'
-  height?: number; // Para forma 'rectangular'
+  width: number; // Diámetro para 'round' o ancho para 'rectangular'
+  height: number; // Solo para 'rectangular'
 }
 
 // Definición del estado del Store

@@ -10,8 +10,8 @@ import {
 import { parsePattern } from "@/services/labeling";
 
 const initialSeatMap: SeatMap = {
-  id: "new-map",
-  name: "Nuevo Mapa",
+  id: "initial-map",
+  name: "Mapa Vacío",
   elements: [],
   viewport: { zoom: 1, panX: 0, panY: 0 },
   createdAt: new Date().toISOString(),
