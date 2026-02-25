@@ -48,9 +48,9 @@
 
 #### Tarea 4: Canvas SVG y Viewport (Pan/Zoom)
 - **Objetivo:** Proporcionar un área de dibujo suave y navegable para el mapa de asientos usando SVG nativo.
-- [ ] Crear `src/components/editor/SvgEditor.tsx` con lógica de Pan/Zoom usando `viewBox` y escuchadores de eventos.
-- [ ] Implementar `src/components/editor/MapElements.tsx` para orquestar el renderizado de elementos SVG.
-- [ ] Asegurar desacoplamiento total del estado de la UI a través del store.
+- [x] Crear `src/components/editor/SvgEditor.tsx` con lógica de Pan/Zoom usando `viewBox` y escuchadores de eventos.
+- [x] Implementar `src/components/editor/MapElements.tsx` para orquestar el renderizado de elementos SVG.
+- [x] Asegurar desacoplamiento total del estado de la UI a través del store.
 
 #### Tarea 5: Renderizado de Elementos Visuales SVG
 - **Objetivo:** Renderizar todos los elementos del dominio con precisión usando componentes SVG nativos.

@@ -5,11 +5,17 @@ export interface Position {
   y: number;
 }
 
+export interface ViewportState {
+  zoom: number;
+  panX: number;
+  panY: number;
+}
+
 export interface SeatMap {
   id: string;
   name: string;
   elements: MapElement[];
-  viewport: { zoom: number; panX: number; panY: number };
+  viewport: ViewportState;
   createdAt: string;
   updatedAt: string;
 }
@@ -73,4 +79,5 @@ export interface EditorState {
   exportJSON: () => string;
   importJSON: (json: string) => void;
   applyBulkLabels: (pattern: string) => void;
+  updateViewport: (updates: Partial<ViewportState>) => void;
 }

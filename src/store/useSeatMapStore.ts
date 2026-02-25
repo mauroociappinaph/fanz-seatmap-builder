@@ -1,6 +1,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { EditorState, MapElement, Position, SeatMap } from "@/domain/types";
+import {
+  EditorState,
+  MapElement,
+  Position,
+  SeatMap,
+  ViewportState,
+} from "@/domain/types";
 import { parsePattern } from "@/services/labeling";
 
 const initialSeatMap: SeatMap = {
@@ -123,6 +129,16 @@ export const useSeatMapStore = create<EditorState>()(
             updatedAt: new Date().toISOString(),
           },
         });
+      },
+
+      updateViewport: (updates: Partial<ViewportState>) => {
+        set((state) => ({
+          seatMap: {
+            ...state.seatMap,
+            viewport: { ...state.seatMap.viewport, ...updates },
+            updatedAt: new Date().toISOString(),
+          },
+        }));
       },
     }),
     {
