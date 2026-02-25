@@ -2,7 +2,7 @@
 
 // src/app/page.tsx
 import { SvgEditor } from "@/components/editor";
-import { Toolbar } from "@/components/ui";
+import { Toolbar, Inspector } from "@/components/ui";
 import { useSeatMapStore } from "@/store";
 import { Toaster, toast } from "sonner";
 
@@ -109,33 +109,7 @@ export default function Home() {
 
         {/* Right Sidebar: Inspector */}
         <aside className="w-72 bg-white border-l border-slate-200 flex flex-col overflow-y-auto">
-          <div className="p-4 border-b border-slate-200">
-            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-widest">
-              Properties
-            </h3>
-          </div>
-          <div className="p-6 flex flex-col items-center justify-center text-center gap-4 mt-20">
-            <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 16v-4" />
-                <path d="M12 8h.01" />
-              </svg>
-            </div>
-            <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">
-              No element selected
-            </p>
-          </div>
+          <Inspector />
         </aside>
       </div>
 
