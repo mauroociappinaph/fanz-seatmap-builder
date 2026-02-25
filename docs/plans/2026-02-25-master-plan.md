@@ -64,9 +64,9 @@
 
 #### Tarea 6: Gestión de Elementos y Confirmación de Eliminación
 - **Objetivo:** Permitir a los usuarios crear, seleccionar y eliminar elementos con confirmación.
-- [ ] Implementar `src/components/ui/Toolbar.tsx` para la creación de elementos.
-- [ ] Implementar `src/components/editor/SelectionManager.tsx` para la selección de nodos SVG.
-- [ ] Crear `src/components/ui/ConfirmDeleteModal.tsx` (Componente Atómico).
+- [x] Implementar `src/components/ui/Toolbar.tsx` para la creación de elementos.
+- [x] Implementar `src/components/editor/SelectionManager.tsx` para la selección de nodos SVG.
+- [x] Crear `src/components/ui/ConfirmDeleteModal.tsx` (Componente Atómico - Implementado via Toast/Action).
 
 #### Tarea 7: Panel de Inspector y Propiedades
 - **Objetivo:** Permitir la edición de propiedades de los elementos como etiquetas y dimensiones.

@@ -80,4 +80,7 @@ export interface EditorState {
   importJSON: (json: string) => void;
   applyBulkLabels: (pattern: string) => void;
   updateViewport: (updates: Partial<ViewportState>) => void;
+  addRow: () => void;
+  addTable: () => void;
+  addArea: () => void;
 }

@@ -1,2 +1,2 @@
-// UI components
-export {};
+// src/components/ui/index.ts
+export * from "./Toolbar";

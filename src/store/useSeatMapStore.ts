@@ -6,6 +6,9 @@ import {
   Position,
   SeatMap,
   ViewportState,
+  Row,
+  Table,
+  Area,
 } from "@/domain/types";
 import { parsePattern } from "@/services/labeling";
 
@@ -139,6 +142,75 @@ export const useSeatMapStore = create<EditorState>()(
             updatedAt: new Date().toISOString(),
           },
         }));
+      },
+
+      addRow: () => {
+        const { viewport } = get().seatMap;
+        const newRow: Row = {
+          id: `row-${crypto.randomUUID()}`,
+          type: "row",
+          label: "Nueva Fila",
+          position: { x: viewport.panX + 50, y: viewport.panY + 50 },
+          rotation: 0,
+          seatSpacing: 30,
+          seats: [
+            {
+              id: `s-${crypto.randomUUID()}`,
+              type: "seat",
+              label: "1",
+              cx: 0,
+              cy: 0,
+              status: "available",
+            },
+            {
+              id: `s-${crypto.randomUUID()}`,
+              type: "seat",
+              label: "2",
+              cx: 30,
+              cy: 0,
+              status: "available",
+            },
+          ],
+        };
+        get().addElement(newRow);
+        get().setSelection([newRow.id]);
+      },
+
+      addTable: () => {
+        const { viewport } = get().seatMap;
+        const newTable: Table = {
+          id: `table-${crypto.randomUUID()}`,
+          type: "table",
+          label: "T",
+          position: { x: viewport.panX + 200, y: viewport.panY + 200 },
+          rotation: 0,
+          shape: "round",
+          width: 80,
+          height: 80,
+          seats: [],
+        };
+        get().addElement(newTable);
+        get().setSelection([newTable.id]);
+      },
+
+      addArea: () => {
+        const { viewport } = get().seatMap;
+        const px = viewport.panX + 100;
+        const py = viewport.panY + 100;
+        const newArea: Area = {
+          id: `area-${crypto.randomUUID()}`,
+          type: "area",
+          label: "Nueva Área",
+          points: [
+            { x: px, y: py },
+            { x: px + 100, y: py },
+            { x: px + 100, y: py + 100 },
+            { x: px, y: py + 100 },
+          ],
+          color: "rgba(59, 130, 246, 0.2)",
+        };
+        get().addElement(newArea);
+        get().setSelection([newArea.id]);
       },
     }),
     {

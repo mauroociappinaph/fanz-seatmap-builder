@@ -1,8 +1,35 @@
+"use client";
+
 // src/app/page.tsx
 import { SvgEditor } from "@/components/editor";
-import { Toaster } from "sonner";
+import { Toolbar } from "@/components/ui";
+import { useSeatMapStore } from "@/store";
+import { Toaster, toast } from "sonner";
 
 export default function Home() {
+  const { selectedIds, removeElements, exportJSON } = useSeatMapStore();
+
+  const handleDelete = () => {
+    if (selectedIds.length === 0) return;
+
+    toast.warning(`¿Eliminar ${selectedIds.length} elementos?`, {
+      description: "Esta acción no se puede deshacer.",
+      action: {
+        label: "Eliminar",
+        onClick: () => {
+          removeElements(selectedIds);
+          toast.success("Elementos eliminados");
+        },
+      },
+    });
+  };
+
+  const handleExport = () => {
+    const json = exportJSON();
+    console.log(json);
+    toast.success("Mapa exportado a la consola (JSON)");
+  };
+
   return (
     <main className="flex flex-col h-screen bg-slate-50 text-slate-900 overflow-hidden">
       {/* SaaS Navbar */}
@@ -27,7 +54,10 @@ export default function Home() {
             Draft Map
           </button>
           <div className="flex items-center gap-2">
-            <button className="px-4 py-1.5 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 text-xs font-semibold rounded shadow-sm transition-all">
+            <button
+              onClick={handleExport}
+              className="px-4 py-1.5 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 text-xs font-semibold rounded shadow-sm transition-all"
+            >
               Save as JSON
             </button>
             <button className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded shadow-sm transition-all">
@@ -41,44 +71,19 @@ export default function Home() {
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar: Tools */}
         <aside className="w-64 bg-white border-r border-slate-200 flex flex-col p-4 gap-4 overflow-y-auto">
-          <div className="space-y-4">
+          <Toolbar />
+
+          <div className="space-y-4 pt-4 border-t border-slate-100">
             <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              Add Elements
+              Quick Actions
             </h3>
-            <div className="grid grid-cols-2 gap-2">
-              <button className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all gap-2 group">
-                <div className="p-2 bg-slate-100 rounded group-hover:bg-blue-100">
-                  <div className="w-4 h-4 bg-slate-400 group-hover:bg-blue-500 rounded-sm" />
-                </div>
-                <span className="text-[10px] font-semibold text-slate-600">
-                  Row
-                </span>
-              </button>
-              <button className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all gap-2 group">
-                <div className="p-2 bg-slate-100 rounded group-hover:bg-blue-100">
-                  <div className="w-4 h-4 rounded-full bg-slate-400 group-hover:bg-blue-500" />
-                </div>
-                <span className="text-[10px] font-semibold text-slate-600">
-                  Table
-                </span>
-              </button>
-              <button className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all gap-2 group">
-                <div className="p-2 bg-slate-100 rounded group-hover:bg-blue-100">
-                  <div className="w-4 h-4 border-2 border-slate-400 group-hover:border-blue-500 rounded-sm" />
-                </div>
-                <span className="text-[10px] font-semibold text-slate-600">
-                  Area
-                </span>
-              </button>
-              <button className="flex flex-col items-center justify-center p-3 border border-slate-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all gap-2 group">
-                <div className="p-2 bg-slate-100 rounded group-hover:bg-blue-100">
-                  <div className="w-4 h-4 bg-slate-400 group-hover:bg-blue-500 rounded-[2px] opacity-40 shrink-0" />
-                </div>
-                <span className="text-[10px] font-semibold text-slate-600">
-                  Shapes
-                </span>
-              </button>
-            </div>
+            <button
+              onClick={handleDelete}
+              disabled={selectedIds.length === 0}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-lg hover:bg-red-100 disabled:opacity-30 disabled:grayscale transition-all text-xs font-bold uppercase tracking-wider"
+            >
+              Delete Selected
+            </button>
           </div>
 
           <div className="mt-auto p-3 bg-slate-50 rounded-xl border border-slate-200">
