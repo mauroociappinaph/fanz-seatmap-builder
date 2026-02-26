@@ -46,17 +46,16 @@ export const useSeatMapStore = create<EditorState>()(
       addElement: (element: MapElement) => {
         set((state) => {
           // Bug 3: Ensure ID uniqueness before adding
-          const idExists = state.seatMap.elements.some(
-            (el) => el.id === element.id,
-          );
+          const elements = state.seatMap?.elements || [];
+          const idExists = elements.some((el) => el.id === element.id);
           const finalElement = idExists
             ? { ...element, id: `${element.type}-${crypto.randomUUID()}` }
             : element;
 
           return {
             seatMap: {
-              ...state.seatMap,
-              elements: [...state.seatMap.elements, finalElement],
+              ...(state.seatMap || initialSeatMap),
+              elements: [...elements, finalElement],
               updatedAt: new Date().toISOString(),
             },
           };
@@ -65,7 +64,8 @@ export const useSeatMapStore = create<EditorState>()(
 
       removeElements: (ids: string[]) => {
         set((state) => {
-          const filteredElements: MapElement[] = state.seatMap.elements
+          const elements = state.seatMap?.elements || [];
+          const filteredElements: MapElement[] = elements
             .filter((el) => !ids.includes(el.id))
             .map((el): MapElement => {
               if (el.type === "row" || el.type === "table") {
@@ -79,74 +79,79 @@ export const useSeatMapStore = create<EditorState>()(
 
           return {
             seatMap: {
-              ...state.seatMap,
+              ...(state.seatMap || initialSeatMap),
               elements: filteredElements,
               updatedAt: new Date().toISOString(),
             },
-            selectedIds: state.selectedIds.filter((id) => !ids.includes(id)),
+            selectedIds: (state.selectedIds || []).filter(
+              (id) => !ids.includes(id),
+            ),
           };
         });
       },
 
       updateElement: (id: string, updates: Partial<MapElement | Seat>) => {
-        set((state) => ({
-          seatMap: {
-            ...state.seatMap,
-            elements: state.seatMap.elements.map((el): MapElement => {
-              if (el.id === id) {
-                // Root element update
-                const updatedEl = { ...el, ...updates } as MapElement;
+        set((state) => {
+          const elements = state.seatMap?.elements || [];
+          return {
+            seatMap: {
+              ...(state.seatMap || initialSeatMap),
+              elements: elements.map((el): MapElement => {
+                if (el.id === id) {
+                  // Root element update
+                  const updatedEl = { ...el, ...updates } as MapElement;
 
-                // Si es una fila y se actualizó el espaciado o los asientos, recalculamos posiciones
-                if (
-                  updatedEl.type === "row" &&
-                  ("seatSpacing" in updates || "seats" in updates)
-                ) {
-                  const rowEl = updatedEl as Row;
-                  const spacing = rowEl.seatSpacing || 30;
-                  rowEl.seats = rowEl.seats.map((s, i) => ({
-                    ...s,
-                    cx: i * spacing,
-                    cy: 0,
-                  }));
+                  // Si es una fila y se actualizó el espaciado o los asientos, recalculamos posiciones
+                  if (
+                    updatedEl.type === "row" &&
+                    ("seatSpacing" in updates || "seats" in updates)
+                  ) {
+                    const rowEl = updatedEl as Row;
+                    const spacing = rowEl.seatSpacing || 30;
+                    rowEl.seats = rowEl.seats.map((s, i) => ({
+                      ...s,
+                      cx: i * spacing,
+                      cy: 0,
+                    }));
+                  }
+
+                  // Si es una mesa y cambió forma o dimensiones o asientos, recalculamos
+                  if (
+                    updatedEl.type === "table" &&
+                    ("shape" in updates ||
+                      "width" in updates ||
+                      "height" in updates ||
+                      "seats" in updates)
+                  ) {
+                    const tableEl = updatedEl as Table;
+                    tableEl.seats = calculateTableSeatPositions(tableEl);
+                  }
+
+                  return updatedEl;
                 }
 
-                // Si es una mesa y cambió forma o dimensiones o asientos, recalculamos
-                if (
-                  updatedEl.type === "table" &&
-                  ("shape" in updates ||
-                    "width" in updates ||
-                    "height" in updates ||
-                    "seats" in updates)
-                ) {
-                  const tableEl = updatedEl as Table;
-                  tableEl.seats = calculateTableSeatPositions(tableEl);
+                // Nested seat update
+                if (el.type === "row" || el.type === "table") {
+                  const seatIndex = el.seats.findIndex((s) => s.id === id);
+                  if (seatIndex !== -1) {
+                    const newSeats = [...el.seats];
+                    newSeats[seatIndex] = {
+                      ...newSeats[seatIndex],
+                      ...updates,
+                    } as Seat;
+                    // Ensure type stays 'seat'
+                    newSeats[seatIndex].type = "seat";
+
+                    return { ...el, seats: newSeats } as MapElement;
+                  }
                 }
 
-                return updatedEl;
-              }
-
-              // Nested seat update
-              if (el.type === "row" || el.type === "table") {
-                const seatIndex = el.seats.findIndex((s) => s.id === id);
-                if (seatIndex !== -1) {
-                  const newSeats = [...el.seats];
-                  newSeats[seatIndex] = {
-                    ...newSeats[seatIndex],
-                    ...updates,
-                  } as Seat;
-                  // Ensure type stays 'seat'
-                  newSeats[seatIndex].type = "seat";
-
-                  return { ...el, seats: newSeats } as MapElement;
-                }
-              }
-
-              return el;
-            }),
-            updatedAt: new Date().toISOString(),
-          },
-        }));
+                return el;
+              }),
+              updatedAt: new Date().toISOString(),
+            },
+          };
+        });
       },
 
       moveElement: (id: string, position: Position) => {
@@ -213,12 +218,15 @@ export const useSeatMapStore = create<EditorState>()(
         const labels = parsePattern(pattern);
         const { selectedIds, seatMap } = get();
 
-        if (labels.length === 0 || selectedIds.length === 0) return;
+        if (labels.length === 0 || !selectedIds || selectedIds.length === 0)
+          return;
+
+        const elements = seatMap?.elements || [];
 
         set({
           seatMap: {
             ...seatMap,
-            elements: seatMap.elements.map((el): MapElement => {
+            elements: elements.map((el): MapElement => {
               // Si el elemento raíz está seleccionado, lo etiquetamos
               if (selectedIds.includes(el.id)) {
                 const index = selectedIds.indexOf(el.id);
