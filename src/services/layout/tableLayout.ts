@@ -15,7 +15,8 @@ export const calculateTableSeatPositions = (table: Table): Seat[] => {
   if (shape === "round") {
     const radius = width / 2 + margin;
     return seats.map((seat, i) => {
-      const angle = (i * 2 * Math.PI) / count;
+      // Start from the top (-PI/2) for better visual ordering
+      const angle = (i * 2 * Math.PI) / count - Math.PI / 2;
       return {
         ...seat,
         cx: Math.cos(angle) * radius,
@@ -30,7 +31,9 @@ export const calculateTableSeatPositions = (table: Table): Seat[] => {
 
     return seats.map((seat, i) => {
       // Find position along the perimeter (0 to perimeter)
-      const distance = (i / count) * perimeter;
+      // We add 0.5 to offset seats into the center of their perimeter segment
+      // this ensures symmetry and prevents seats from sticking to corners.
+      const distance = ((i + 0.5) / count) * perimeter;
 
       let cx = 0;
       let cy = 0;
