@@ -67,6 +67,38 @@ describe("useSeatMapStore", () => {
     expect((seatMap.elements[0] as Row).label).toBe("Updated Row");
   });
 
+  it("should ensure unique IDs when adding elements", () => {
+    const row1: Row = {
+      id: "duplicate-id",
+      type: "row",
+      label: "Row 1",
+      position: { x: 0, y: 0 },
+      rotation: 0,
+      seats: [],
+      seatSpacing: 10,
+      seatCount: 0,
+    };
+    const row2: Row = {
+      id: "duplicate-id",
+      type: "row",
+      label: "Row 2",
+      position: { x: 50, y: 50 },
+      rotation: 0,
+      seats: [],
+      seatSpacing: 10,
+      seatCount: 0,
+    };
+
+    useSeatMapStore.getState().addElement(row1);
+    useSeatMapStore.getState().addElement(row2);
+
+    const { seatMap } = useSeatMapStore.getState();
+    expect(seatMap.elements).toHaveLength(2);
+    expect(seatMap.elements[0].id).toBe("duplicate-id");
+    expect(seatMap.elements[1].id).not.toBe("duplicate-id");
+    expect(seatMap.elements[1].id).toContain("row-");
+  });
+
   it("should toggle selection", () => {
     useSeatMapStore.getState().toggleSelection("element-1");
     expect(useSeatMapStore.getState().selectedIds).toContain("element-1");

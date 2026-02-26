@@ -18,7 +18,7 @@ export const SeatComponent: React.FC<SeatComponentProps> = ({
   return (
     <g
       className="cursor-pointer transition-all duration-200"
-      onClick={(e) => {
+      onMouseDown={(e) => {
         e.stopPropagation();
         onClick?.();
       }}

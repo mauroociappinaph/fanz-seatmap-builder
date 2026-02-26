@@ -44,13 +44,23 @@ export const useSeatMapStore = create<EditorState>()(
       },
 
       addElement: (element: MapElement) => {
-        set((state) => ({
-          seatMap: {
-            ...state.seatMap,
-            elements: [...state.seatMap.elements, element],
-            updatedAt: new Date().toISOString(),
-          },
-        }));
+        set((state) => {
+          // Bug 3: Ensure ID uniqueness before adding
+          const idExists = state.seatMap.elements.some(
+            (el) => el.id === element.id,
+          );
+          const finalElement = idExists
+            ? { ...element, id: `${element.type}-${crypto.randomUUID()}` }
+            : element;
+
+          return {
+            seatMap: {
+              ...state.seatMap,
+              elements: [...state.seatMap.elements, finalElement],
+              updatedAt: new Date().toISOString(),
+            },
+          };
+        });
       },
 
       removeElements: (ids: string[]) => {
@@ -162,10 +172,31 @@ export const useSeatMapStore = create<EditorState>()(
         try {
           const data = JSON.parse(json);
           const validatedSeatMap = validateSeatMap(data);
+
+          // Bug 3: Ensure all IDs are unique upon import
+          const existingIds = new Set<string>();
+          validatedSeatMap.elements = validatedSeatMap.elements.map((el) => {
+            if (existingIds.has(el.id)) {
+              el.id = `${el.type}-${crypto.randomUUID()}`;
+            }
+            existingIds.add(el.id);
+
+            if (el.type === "row" || el.type === "table") {
+              el.seats = el.seats.map((s) => {
+                if (existingIds.has(s.id)) {
+                  s.id = `s-${crypto.randomUUID()}`;
+                }
+                existingIds.add(s.id);
+                return s;
+              });
+            }
+            return el;
+          });
+
           set({ seatMap: validatedSeatMap, selectedIds: [] });
         } catch (error) {
           console.error("Failed to import JSON:", error);
-          throw error; // Rethrow to let the UI handle the error (e.g. show a toast)
+          throw error;
         }
       },
 
@@ -402,6 +433,26 @@ export const useSeatMapStore = create<EditorState>()(
     }),
     {
       name: "fanz-seatmap-storage",
+      version: 1,
+      migrate: (persistedState: unknown, version: number) => {
+        if (version === 0) {
+          // Migration for Bug 4: seatCount missing
+          const state = persistedState as EditorState;
+          if (state.seatMap?.elements) {
+            state.seatMap.elements = state.seatMap.elements.map((el) => {
+              if (el.type === "row" && !("seatCount" in el)) {
+                return {
+                  ...el,
+                  seatCount: (el as Row).seats?.length || 0,
+                } as Row;
+              }
+              return el;
+            });
+          }
+          return state;
+        }
+        return persistedState as EditorState;
+      },
       partialize: (state) => ({
         seatMap: state.seatMap,
       }),

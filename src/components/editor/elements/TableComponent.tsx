@@ -10,10 +10,15 @@ interface TableComponentProps {
 }
 
 export const TableComponent: React.FC<TableComponentProps> = ({ table }) => {
-  const { selectedIds, toggleSelection, startDragging, setActiveTool } =
-    useSeatMapStore();
+  const isSelected = useSeatMapStore((state) =>
+    state.selectedIds.includes(table.id),
+  );
+  const selectedIds = useSeatMapStore((state) => state.selectedIds);
+  const toggleSelection = useSeatMapStore((state) => state.toggleSelection);
+  const startDragging = useSeatMapStore((state) => state.startDragging);
+  const setActiveTool = useSeatMapStore((state) => state.setActiveTool);
+
   const { screenToSVG } = useViewport();
-  const isSelected = selectedIds.includes(table.id);
 
   const onMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation();

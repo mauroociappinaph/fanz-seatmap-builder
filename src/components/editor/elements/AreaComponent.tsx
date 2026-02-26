@@ -9,10 +9,14 @@ interface AreaComponentProps {
 }
 
 export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
-  const { selectedIds, toggleSelection, startDragging, setActiveTool } =
-    useSeatMapStore();
+  const isSelected = useSeatMapStore((state) =>
+    state.selectedIds.includes(area.id),
+  );
+  const toggleSelection = useSeatMapStore((state) => state.toggleSelection);
+  const startDragging = useSeatMapStore((state) => state.startDragging);
+  const setActiveTool = useSeatMapStore((state) => state.setActiveTool);
+
   const { screenToSVG } = useViewport();
-  const isSelected = selectedIds.includes(area.id);
 
   // Convert points array to SVG polygon string
   const pointsString = area.points.map((p) => `${p.x},${p.y}`).join(" ");

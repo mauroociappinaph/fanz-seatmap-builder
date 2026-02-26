@@ -10,10 +10,15 @@ interface RowComponentProps {
 }
 
 export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
-  const { selectedIds, toggleSelection, startDragging, setActiveTool } =
-    useSeatMapStore();
+  const isSelected = useSeatMapStore((state) =>
+    state.selectedIds.includes(row.id),
+  );
+  const toggleSelection = useSeatMapStore((state) => state.toggleSelection);
+  const startDragging = useSeatMapStore((state) => state.startDragging);
+  const setActiveTool = useSeatMapStore((state) => state.setActiveTool);
+  const selectedIds = useSeatMapStore((state) => state.selectedIds);
+
   const { screenToSVG } = useViewport();
-  const isSelected = selectedIds.includes(row.id);
 
   const onMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation(); // Evita que el click llegue al fondo del SVG
