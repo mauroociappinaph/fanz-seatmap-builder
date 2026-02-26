@@ -12,13 +12,15 @@ export const Inspector: React.FC = () => {
 
   // Helper to find element or seat by ID
   const findElementById = (id: string): MapElement | Seat | null => {
+    if (!seatMap?.elements) return null;
+
     // Check root elements
     const rootEl = seatMap.elements.find((el) => el.id === id);
     if (rootEl) return rootEl;
 
     // Check nested seats in rows and tables
     for (const el of seatMap.elements) {
-      if (el.type === "row" || el.type === "table") {
+      if ((el.type === "row" || el.type === "table") && el.seats) {
         const seat = el.seats.find((s) => s.id === id);
         if (seat) return seat;
       }
