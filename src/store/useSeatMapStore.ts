@@ -8,15 +8,17 @@ import {
   ViewportState,
   Row,
   Table,
-  Area,
+  Row,
+  Table,
   Seat,
   MAX_LABEL_LENGTHS,
 } from "@/domain/types";
 import { parsePattern } from "@/services/labeling";
 import { calculateTableSeatPositions } from "@/services/layout/tableLayout";
 import { validateSeatMap } from "@/services/persistence/jsonMapper";
-
 import { strings } from "@/lib/i18n/strings";
+import { ElementFactory } from "@/services/factory/elementFactory";
+import { MapService } from "@/services/domain/mapService";
 
 const initialSeatMap: SeatMap = {
   id: "initial-map",
@@ -54,7 +56,6 @@ export const useSeatMapStore = create<EditorState>()(
 
       addElement: (element: MapElement) => {
         set((state) => {
-          // Bug 3: Ensure ID uniqueness before adding
           const elements = state.seatMap?.elements || [];
           const idExists = elements.some((el) => el.id === element.id);
           const finalElement = idExists
@@ -111,13 +112,16 @@ export const useSeatMapStore = create<EditorState>()(
         // Truncate labels if they exceed limits
         const sanitizedUpdates = { ...updates };
         if ("label" in sanitizedUpdates && sanitizedUpdates.label) {
-          // If we don't have the type in updates, we'll check it during the map process
-          // But if we do, we can pre-sanitize
-          const limit =
-            "type" in sanitizedUpdates && sanitizedUpdates.type === "seat"
-              ? MAX_LABEL_LENGTHS.seat
-              : 50; // default safe limit for groups
-          sanitizedUpdates.label = sanitizedUpdates.label.slice(0, limit);
+          sanitizedUpdates.label = MapService.sanitizeLabel(
+            sanitizedUpdates.label,
+            ("type" in sanitizedUpdates &&
+            (sanitizedUpdates.type === "row" ||
+              sanitizedUpdates.type === "table" ||
+              sanitizedUpdates.type === "area" ||
+              sanitizedUpdates.type === "seat")
+              ? sanitizedUpdates.type
+              : "row") as MapElement["type"] | "seat",
+          );
         }
 
         set((state) => {
@@ -127,7 +131,6 @@ export const useSeatMapStore = create<EditorState>()(
               ...(state.seatMap || initialSeatMap),
               elements: elements.map((el): MapElement => {
                 if (el.id === id) {
-                  // Root element update
                   const updatedEl = {
                     ...el,
                     ...sanitizedUpdates,
@@ -139,21 +142,20 @@ export const useSeatMapStore = create<EditorState>()(
                     updatedEl.label = updatedEl.label.slice(0, typeLimit);
                   }
 
-                  // Si es una fila y se actualizó el espaciado o los asientos, recalculamos posiciones
+                  // Recalculate Row positions
                   if (
                     updatedEl.type === "row" &&
                     ("seatSpacing" in updates || "seats" in updates)
                   ) {
-                    const rowEl = updatedEl as Row;
-                    const spacing = rowEl.seatSpacing || 30;
-                    rowEl.seats = rowEl.seats.map((s, i) => ({
+                    const spacing = (updatedEl as Row).seatSpacing || 30;
+                    updatedEl.seats = updatedEl.seats.map((s, i) => ({
                       ...s,
                       cx: i * spacing,
                       cy: 0,
                     }));
                   }
 
-                  // Si es una mesa y cambió forma o dimensiones o asientos o capacidad, recalculamos
+                  // Recalculate Table positions (including capacity changes)
                   if (
                     updatedEl.type === "table" &&
                     ("shape" in updates ||
@@ -163,8 +165,6 @@ export const useSeatMapStore = create<EditorState>()(
                       "capacity" in (updates as Record<string, unknown>))
                   ) {
                     const tableEl = updatedEl as Table;
-
-                    // Support for capacity update via generic updateElement
                     if ("capacity" in (updates as Record<string, unknown>)) {
                       const count = (updates as Record<string, number>)
                         .capacity;
@@ -187,7 +187,6 @@ export const useSeatMapStore = create<EditorState>()(
                       }
                       tableEl.seats = currentSeats;
                     }
-
                     tableEl.seats = calculateTableSeatPositions(tableEl);
                   }
 
@@ -203,7 +202,6 @@ export const useSeatMapStore = create<EditorState>()(
                       ...newSeats[seatIndex],
                       ...sanitizedUpdates,
                     } as Seat;
-                    // Ensure type stays 'seat' and label is limited
                     newSeats[seatIndex].type = "seat";
                     if (
                       newSeats[seatIndex].label.length > MAX_LABEL_LENGTHS.seat
@@ -212,7 +210,6 @@ export const useSeatMapStore = create<EditorState>()(
                         seatIndex
                       ].label.slice(0, MAX_LABEL_LENGTHS.seat);
                     }
-
                     return { ...el, seats: newSeats } as MapElement;
                   }
                 }
@@ -253,14 +250,12 @@ export const useSeatMapStore = create<EditorState>()(
         set((state) => {
           const currentSelection = state.selectedIds || [];
           if (isMulti) {
-            // Toggle element in selection
             return {
               selectedIds: currentSelection.includes(id)
                 ? currentSelection.filter((sid) => sid !== id)
                 : [...currentSelection, id],
             };
           } else {
-            // Set selection to only this element
             return { selectedIds: [id] };
           }
         });
@@ -275,7 +270,6 @@ export const useSeatMapStore = create<EditorState>()(
           const data = JSON.parse(json);
           const validatedSeatMap = validateSeatMap(data);
 
-          // Bug 3: Ensure all IDs are unique upon import
           const existingIds = new Set<string>();
           validatedSeatMap.elements = validatedSeatMap.elements.map((el) => {
             if (existingIds.has(el.id)) {
@@ -309,29 +303,23 @@ export const useSeatMapStore = create<EditorState>()(
         if (labels.length === 0 || !selectedIds || selectedIds.length === 0)
           return;
 
-        const elements = seatMap?.elements || [];
-
         set({
           seatMap: {
             ...seatMap,
-            elements: elements.map((el): MapElement => {
-              // Si el elemento raíz está seleccionado, lo etiquetamos
+            elements: seatMap.elements.map((el): MapElement => {
               if (selectedIds.includes(el.id)) {
                 const index = selectedIds.indexOf(el.id);
                 let label = labels[index % labels.length];
-                // Truncate based on type
-                label = label.slice(0, MAX_LABEL_LENGTHS[el.type]);
+                label = MapService.sanitizeLabel(label, el.type);
                 return { ...el, label } as MapElement;
               }
 
-              // Si es una fila o mesa, buscamos asientos seleccionados dentro
               if (el.type === "row" || el.type === "table") {
                 const updatedSeats = el.seats.map((s) => {
                   if (selectedIds.includes(s.id)) {
                     const index = selectedIds.indexOf(s.id);
                     let label = labels[index % labels.length];
-                    // Truncate for seats
-                    label = label.slice(0, MAX_LABEL_LENGTHS.seat);
+                    label = MapService.sanitizeLabel(label, "seat");
                     return { ...s, label };
                   }
                   return s;
@@ -357,61 +345,18 @@ export const useSeatMapStore = create<EditorState>()(
       },
 
       updateSeatCount: (id: string, count: number) => {
-        const { seatMap } = get();
-        set({
+        set((state) => ({
           seatMap: {
-            ...seatMap,
-            elements: seatMap.elements.map((el): MapElement => {
-              if (el.id === id && (el.type === "row" || el.type === "table")) {
-                const currentSeats = el.seats || [];
-                const diff = count - currentSeats.length;
-
-                let newSeats = [...currentSeats];
-                if (diff > 0) {
-                  // Add seats
-                  for (let i = 0; i < diff; i++) {
-                    const index = currentSeats.length + i;
-                    newSeats.push({
-                      id: `s-${crypto.randomUUID()}`,
-                      type: "seat",
-                      label: String(index + 1),
-                      cx: 0, // Will be recalculated below
-                      cy: 0,
-                      status: "available",
-                    });
-                  }
-                } else if (diff < 0) {
-                  // Remove seats
-                  newSeats = newSeats.slice(0, count);
-                }
-
-                const updatedEl = { ...el, seats: newSeats } as MapElement;
-
-                // Recalculate positions based on type
-                if (updatedEl.type === "row") {
-                  const spacing = updatedEl.seatSpacing || 30;
-                  updatedEl.seats = updatedEl.seats.map(
-                    (s: Seat, i: number) => ({
-                      ...s,
-                      cx: i * spacing,
-                      cy: 0,
-                    }),
-                  );
-                  // Consistency fix: update seatCount property
-                  updatedEl.seatCount = count;
-                } else if (updatedEl.type === "table") {
-                  updatedEl.seats = calculateTableSeatPositions(
-                    updatedEl as Table,
-                  );
-                }
-
-                return updatedEl;
+            ...state.seatMap,
+            elements: state.seatMap.elements.map((el): MapElement => {
+              if (el.id === id) {
+                return MapService.adjustSeatCount(el, count);
               }
               return el;
             }),
             updatedAt: new Date().toISOString(),
           },
-        });
+        }));
       },
 
       updateCreationConfig: (
@@ -421,9 +366,6 @@ export const useSeatMapStore = create<EditorState>()(
           creationConfig: { ...state.creationConfig, ...updates },
         }));
       },
-
-      draggingId: null,
-      lastMousePosition: null,
 
       setActiveTool: (tool) => set({ activeTool: tool }),
 
@@ -442,8 +384,6 @@ export const useSeatMapStore = create<EditorState>()(
         const dx = position.x - lastMousePosition.x;
         const dy = position.y - lastMousePosition.y;
 
-        // If the dragged element is selected, move the whole selection
-        // Otherwise, just move the dragged element
         const idsToMove = selectedIds.includes(draggingId)
           ? selectedIds
           : [draggingId];
@@ -457,22 +397,21 @@ export const useSeatMapStore = create<EditorState>()(
                   return {
                     ...el,
                     position: {
-                      x: Math.round((el.position.x + dx) * 100) / 100,
-                      y: Math.round((el.position.y + dy) * 100) / 100,
+                      x: MapService.roundCoordinate(el.position.x + dx),
+                      y: MapService.roundCoordinate(el.position.y + dy),
                     },
                   } as MapElement;
                 } else if (el.type === "area") {
                   return {
                     ...el,
                     points: el.points.map((p) => ({
-                      x: Math.round((p.x + dx) * 100) / 100,
-                      y: Math.round((p.y + dy) * 100) / 100,
+                      x: MapService.roundCoordinate(p.x + dx),
+                      y: MapService.roundCoordinate(p.y + dy),
                     })),
                   } as MapElement;
                 }
               }
 
-              // Handle individual nested seats if they are selected
               if (el.type === "row" || el.type === "table") {
                 const hasSelectedSeat = el.seats.some((s) =>
                   idsToMove.includes(s.id),
@@ -484,8 +423,8 @@ export const useSeatMapStore = create<EditorState>()(
                       idsToMove.includes(s.id)
                         ? ({
                             ...s,
-                            cx: Math.round((s.cx + dx) * 100) / 100,
-                            cy: Math.round((s.cy + dy) * 100) / 100,
+                            cx: MapService.roundCoordinate(s.cx + dx),
+                            cy: MapService.roundCoordinate(s.cy + dy),
                           } as Seat)
                         : s,
                     ),
@@ -503,32 +442,16 @@ export const useSeatMapStore = create<EditorState>()(
 
       addRow: (pos) => {
         const { seatMap, creationConfig } = get();
-        const { viewport } = seatMap;
         const position = pos || {
-          x: viewport.panX + 100,
-          y: viewport.panY + 100,
+          x: seatMap.viewport.panX + 100,
+          y: seatMap.viewport.panY + 100,
         };
 
-        const seatSpacing = 30;
-        const seatCount = creationConfig.rowSeats;
-
-        const newRow: Row = {
-          id: `row-${crypto.randomUUID()}`,
-          type: "row",
-          label: strings.elements.newRow,
+        const newRow = ElementFactory.createRow(
           position,
-          rotation: 0,
-          seatSpacing,
-          seatCount,
-          seats: Array.from({ length: seatCount }, (_, i) => ({
-            id: `s-${crypto.randomUUID()}`,
-            type: "seat",
-            label: String(i + 1),
-            cx: i * seatSpacing,
-            cy: 0,
-            status: "available",
-          })),
-        };
+          creationConfig.rowSeats,
+          30,
+        );
         get().addElement(newRow);
         get().setSelection([newRow.id]);
         get().setActiveTool("select");
@@ -536,58 +459,28 @@ export const useSeatMapStore = create<EditorState>()(
 
       addTable: (pos) => {
         const { seatMap, creationConfig } = get();
-        const { viewport } = seatMap;
         const position = pos || {
-          x: viewport.panX + 200,
-          y: viewport.panY + 200,
+          x: seatMap.viewport.panX + 200,
+          y: seatMap.viewport.panY + 200,
         };
 
-        const initialTable: Table = {
-          id: `table-${crypto.randomUUID()}`,
-          type: "table",
-          label: strings.elements.newTable,
+        const newTable = ElementFactory.createTable(
           position,
-          rotation: 0,
-          shape: "round",
-          width: 80,
-          height: 80,
-          seats: Array.from({ length: creationConfig.tableSeats }, (_, i) => ({
-            id: `s-${crypto.randomUUID()}`,
-            type: "seat",
-            label: String(i + 1),
-            cx: 0,
-            cy: 0,
-            status: "available",
-          })),
-        };
-
-        // Distribute initial seats
-        initialTable.seats = calculateTableSeatPositions(initialTable);
-
-        get().addElement(initialTable);
-        get().setSelection([initialTable.id]);
+          creationConfig.tableSeats,
+        );
+        get().addElement(newTable);
+        get().setSelection([newTable.id]);
         get().setActiveTool("select");
       },
 
       addArea: (pos) => {
-        const { viewport } = get().seatMap;
+        const { seatMap } = get();
         const startPos = pos || {
-          x: viewport.panX + 150,
-          y: viewport.panY + 150,
+          x: seatMap.viewport.panX + 150,
+          y: seatMap.viewport.panY + 150,
         };
 
-        const newArea: Area = {
-          id: `area-${crypto.randomUUID()}`,
-          type: "area",
-          label: strings.elements.newArea,
-          points: [
-            { x: startPos.x, y: startPos.y },
-            { x: startPos.x + 150, y: startPos.y },
-            { x: startPos.x + 150, y: startPos.y + 100 },
-            { x: startPos.x, y: startPos.y + 100 },
-          ],
-          color: "rgba(59, 130, 246, 0.2)",
-        };
+        const newArea = ElementFactory.createArea(startPos);
         get().addElement(newArea);
         get().setSelection([newArea.id]);
         get().setActiveTool("select");
@@ -598,7 +491,6 @@ export const useSeatMapStore = create<EditorState>()(
       version: 1,
       migrate: (persistedState: unknown, version: number) => {
         if (version === 0) {
-          // Migration for Bug 4: seatCount missing
           const state = persistedState as EditorState;
           if (state.seatMap?.elements) {
             state.seatMap.elements = state.seatMap.elements.map((el) => {
