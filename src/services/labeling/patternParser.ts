@@ -42,6 +42,14 @@ export const parsePattern = (pattern: string): string[] => {
       const s = Number(startStr);
       const e = Number(endStr);
       const step = s <= e ? 1 : -1;
+      const count = Math.abs(e - s) + 1;
+
+      // Limit range size to 500
+      if (count > 500) {
+        expandedSegments.push([`{${rawContent}}`]);
+        continue;
+      }
+
       const range: string[] = [];
       for (let i = s; s <= e ? i <= e : i >= e; i += step) {
         range.push(String(i));
@@ -58,6 +66,14 @@ export const parsePattern = (pattern: string): string[] => {
       const s = startStr.charCodeAt(0);
       const e = endStr.charCodeAt(0);
       const step = s <= e ? 1 : -1;
+      const count = Math.abs(e - s) + 1;
+
+      // Limit range size to 500
+      if (count > 500) {
+        expandedSegments.push([`{${rawContent}}`]);
+        continue;
+      }
+
       const range: string[] = [];
       for (let i = s; s <= e ? i <= e : i >= e; i += step) {
         range.push(String.fromCharCode(i));
@@ -69,18 +85,8 @@ export const parsePattern = (pattern: string): string[] => {
   }
 
   // Calculate cartesian product of all parts
-  // Split the rest of the string around the placeholders
   const staticParts = pattern.split(rangeRegex);
-  // staticParts has format: [Prefix, Pattern1, Middle, Pattern2, Suffix]
-  // BUT Regex match segments are what we expanded.
-  // A better way to rebuild is to use a cartesian product of ALL parts (static and expanded)
-
   let results: string[] = [""];
-
-  // Re-split to get static parts and then interleave
-  // Pattern: "A{1..2}B{3..4}"
-  // Static: ["A", "B", ""]
-  // Expanded: [["1","2"], ["3","4"]]
 
   for (let i = 0; i < expandedSegments.length; i++) {
     const prefix = staticParts[i * 2];
@@ -89,8 +95,11 @@ export const parsePattern = (pattern: string): string[] => {
 
     for (const res of results) {
       for (const val of currentExpanded) {
+        // Hard limit of 5000 total labels to prevent DoS
+        if (nextResults.length >= 5000) break;
         nextResults.push(res + prefix + val);
       }
+      if (nextResults.length >= 5000) break;
     }
     results = nextResults;
   }

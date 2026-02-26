@@ -53,6 +53,8 @@ export const SeatComponent: React.FC<SeatComponentProps> = ({
           fontWeight="bold"
           fill={isSelected ? "white" : "#64748b"}
           className="pointer-events-none select-none"
+          textLength={16} // Force squeeze if label is too wide
+          lengthAdjust="spacingAndGlyphs"
         >
           {/* React automatically sanitizes strings, but we ensure it's treated as plain text */}
           {String(seat.label)}

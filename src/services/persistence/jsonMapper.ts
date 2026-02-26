@@ -10,7 +10,7 @@ const PositionSchema = z.object({
 const SeatSchema = z.object({
   id: z.string(),
   type: z.literal("seat"),
-  label: z.string(),
+  label: z.string().max(10),
   status: z.enum(["available", "selected", "blocked", "occupied"]),
   cx: z.number(),
   cy: z.number(),
@@ -19,7 +19,7 @@ const SeatSchema = z.object({
 const RowSchema = z.object({
   id: z.string(),
   type: z.literal("row"),
-  label: z.string(),
+  label: z.string().min(1).max(50),
   position: PositionSchema,
   rotation: z.number(),
   seats: z.array(SeatSchema),
@@ -30,7 +30,7 @@ const RowSchema = z.object({
 const AreaSchema = z.object({
   id: z.string(),
   type: z.literal("area"),
-  label: z.string(),
+  label: z.string().min(1).max(50),
   points: z.array(PositionSchema),
   color: z.string().optional(),
 });
@@ -38,7 +38,7 @@ const AreaSchema = z.object({
 const TableSchema = z.object({
   id: z.string(),
   type: z.literal("table"),
-  label: z.string(),
+  label: z.string().min(1).max(50),
   position: PositionSchema,
   rotation: z.number(),
   shape: z.enum(["round", "rectangular"]),
@@ -55,7 +55,7 @@ const MapElementSchema = z.discriminatedUnion("type", [
 
 const SeatMapSchema = z.object({
   id: z.string(),
-  name: z.string(),
+  name: z.string().max(100),
   elements: z.array(MapElementSchema),
   viewport: z.object({
     zoom: z.number(),

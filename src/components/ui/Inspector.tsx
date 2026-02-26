@@ -125,6 +125,7 @@ export const Inspector: React.FC = () => {
                 type="text"
                 placeholder="e.g. A{1..10}"
                 id="bulk-label-pattern"
+                maxLength={100}
                 className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -165,6 +166,7 @@ export const Inspector: React.FC = () => {
               <input
                 type="text"
                 value={selectedElement.label}
+                maxLength={selectedElement.type === "seat" ? 10 : 50}
                 onChange={(e) => handleUpdate({ label: e.target.value })}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
               />
