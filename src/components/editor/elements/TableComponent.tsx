@@ -40,7 +40,9 @@ export const TableComponent: React.FC<TableComponentProps> = ({ table }) => {
     <g
       transform={`translate(${table.position.x}, ${table.position.y}) rotate(${table.rotation})`}
       onMouseDown={onMouseDown}
-      className="group cursor-move"
+      className="group cursor-move outline-none"
+      role="group"
+      aria-label={`Table ${table.label}, ${table.shape} shape, ${table.seats.length} seats`}
     >
       {/* Table Surface */}
       {table.shape === "round" ? (

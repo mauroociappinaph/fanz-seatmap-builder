@@ -104,6 +104,7 @@ export default function Home() {
         <div className="flex items-center gap-3">
           <button
             onClick={handleNewMap}
+            aria-label="Create a new empty seat map"
             className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all duration-200 active:scale-95"
           >
             New Map
@@ -111,17 +112,22 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <button
               onClick={handleImportClick}
+              aria-label="Import seat map from JSON file"
               className="px-4 py-1.5 bg-white border border-slate-200 hover:border-blue-300 hover:text-blue-600 text-slate-700 text-xs font-semibold rounded shadow-sm hover:shadow transition-all duration-200 active:scale-95"
             >
               Import JSON
             </button>
             <button
               onClick={handleExport}
+              aria-label="Export seat map to JSON file"
               className="px-4 py-1.5 bg-white border border-slate-200 hover:border-blue-300 hover:text-blue-600 text-slate-700 text-xs font-semibold rounded shadow-sm hover:shadow transition-all duration-200 active:scale-95"
             >
               Export JSON
             </button>
-            <button className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-semibold rounded shadow-sm hover:shadow-md transition-all duration-200 active:scale-95">
+            <button
+              aria-label="Publish current seat map"
+              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-semibold rounded shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
+            >
               Publish
             </button>
           </div>
@@ -141,6 +147,7 @@ export default function Home() {
             <button
               onClick={handleDelete}
               disabled={selectedIds.length === 0}
+              aria-label={`Delete ${selectedIds.length} selected elements`}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-lg hover:bg-red-100 hover:border-red-200 hover:shadow-sm disabled:opacity-40 disabled:grayscale disabled:pointer-events-none transition-all duration-200 active:scale-95 text-xs font-bold uppercase tracking-wider"
             >
               Delete Selected

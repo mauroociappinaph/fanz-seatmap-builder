@@ -17,6 +17,7 @@ export const Toolbar: React.FC = () => {
       <div className="grid grid-cols-2 gap-2">
         <button
           onClick={() => setActiveTool("addRow")}
+          aria-label="Select tool to add a new row of seats"
           className={clsx(
             "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200 gap-2 group active:scale-95",
             activeTool === "addRow"
@@ -56,6 +57,7 @@ export const Toolbar: React.FC = () => {
 
         <button
           onClick={() => setActiveTool("addTable")}
+          aria-label="Select tool to add a new table"
           className={clsx(
             "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200 gap-2 group active:scale-95",
             activeTool === "addTable"
@@ -95,6 +97,7 @@ export const Toolbar: React.FC = () => {
 
         <button
           onClick={() => setActiveTool("addArea")}
+          aria-label="Select tool to add a new area"
           className={clsx(
             "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200 gap-2 group active:scale-95",
             activeTool === "addArea"
@@ -134,6 +137,7 @@ export const Toolbar: React.FC = () => {
 
         <button
           onClick={() => setActiveTool("select")}
+          aria-label="Select tool to select and move elements"
           className={clsx(
             "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200 gap-2 group active:scale-95",
             activeTool === "select"

@@ -40,7 +40,9 @@ export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
     <g
       transform={`translate(${row.position.x}, ${row.position.y}) rotate(${row.rotation})`}
       onMouseDown={onMouseDown}
-      className="group cursor-move"
+      className="group cursor-move outline-none"
+      role="group"
+      aria-label={`Row ${row.label}, ${row.seats.length} seats`}
     >
       {/* Visual bounding box for selection if needed */}
       {isSelected && (

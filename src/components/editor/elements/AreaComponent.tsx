@@ -38,7 +38,12 @@ export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
   };
 
   return (
-    <g onMouseDown={onMouseDown} className="group cursor-move">
+    <g
+      onMouseDown={onMouseDown}
+      className="group cursor-move outline-none"
+      role="region"
+      aria-label={`Area ${area.label}`}
+    >
       <polygon
         points={pointsString}
         fill={area.color || "rgba(59, 130, 246, 0.1)"}

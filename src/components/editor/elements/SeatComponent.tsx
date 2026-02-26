@@ -17,10 +17,20 @@ export const SeatComponent: React.FC<SeatComponentProps> = ({
 
   return (
     <g
-      className="cursor-pointer transition-all duration-200"
+      className="cursor-pointer transition-all duration-200 outline-none"
+      role="button"
+      aria-label={`Seat ${seat.label}, status: ${seat.status}`}
+      aria-pressed={isSelected}
+      tabIndex={0}
       onMouseDown={(e) => {
         e.stopPropagation();
         onClick?.(e.ctrlKey || e.metaKey);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick?.(e.ctrlKey || e.metaKey);
+        }
       }}
     >
       <circle
