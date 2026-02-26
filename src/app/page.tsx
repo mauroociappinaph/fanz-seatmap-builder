@@ -5,9 +5,12 @@ import { SvgEditor } from "@/components/editor";
 import { Toolbar, Inspector } from "@/components/ui";
 import { useSeatMapStore } from "@/store";
 import { Toaster, toast } from "sonner";
+import { useRef } from "react";
 
 export default function Home() {
-  const { selectedIds, removeElements, exportJSON } = useSeatMapStore();
+  const { selectedIds, removeElements, exportJSON, importJSON, newMap } =
+    useSeatMapStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDelete = () => {
     if (selectedIds.length === 0) return;
@@ -27,11 +30,57 @@ export default function Home() {
   const handleExport = () => {
     const json = exportJSON();
     console.log(json);
-    toast.success("Mapa exportado a la consola (JSON)");
+    // Trigger download
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `seatmap-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Mapa exportado y descargado");
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const json = event.target?.result as string;
+        importJSON(json);
+        toast.success("Mapa importado correctamente");
+      } catch (error) {
+        console.error(error);
+        toast.error("Error al importar el mapa: JSON inválido");
+      }
+    };
+    reader.readAsText(file);
+    // Reset input
+    e.target.value = "";
+  };
+
+  const handleNewMap = () => {
+    if (confirm("¿Estás seguro? Se perderán los cambios no guardados.")) {
+      newMap();
+      toast.success("Nuevo mapa creado");
+    }
   };
 
   return (
     <main className="flex flex-col h-screen bg-slate-50 text-slate-900 overflow-hidden">
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        accept=".json"
+        onChange={handleFileChange}
+      />
       {/* SaaS Navbar */}
       <nav className="z-50 flex items-center justify-between px-6 py-3 bg-white border-b border-slate-200">
         <div className="flex items-center gap-4">
@@ -50,15 +99,24 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-md transition-all">
-            Draft Map
+          <button
+            onClick={handleNewMap}
+            className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-md transition-all"
+          >
+            New Map
           </button>
           <div className="flex items-center gap-2">
+            <button
+              onClick={handleImportClick}
+              className="px-4 py-1.5 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 text-xs font-semibold rounded shadow-sm transition-all"
+            >
+              Import JSON
+            </button>
             <button
               onClick={handleExport}
               className="px-4 py-1.5 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 text-xs font-semibold rounded shadow-sm transition-all"
             >
-              Save as JSON
+              Export JSON
             </button>
             <button className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded shadow-sm transition-all">
               Publish
