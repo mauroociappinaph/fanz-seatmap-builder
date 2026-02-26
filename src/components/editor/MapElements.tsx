@@ -4,11 +4,12 @@ import { useSeatMapStore } from "@/store";
 import { RowComponent, TableComponent, AreaComponent } from "./elements";
 
 export const MapElements: React.FC = () => {
-  const { seatMap } = useSeatMapStore();
+  const seatMap = useSeatMapStore((state) => state.seatMap);
+  const elements = seatMap?.elements || [];
 
   return (
     <g id="map-elements">
-      {seatMap.elements.map((el) => {
+      {elements.map((el) => {
         switch (el.type) {
           case "row":
             return <RowComponent key={el.id} row={el} />;
