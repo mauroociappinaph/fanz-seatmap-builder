@@ -30,6 +30,28 @@ export const Inspector: React.FC = () => {
 
   const selectedElement = findElementById(selectedIds[0]);
 
+  const [localColor, setLocalColor] = React.useState<string>("");
+
+  // Sync local color when selection changes
+  React.useEffect(() => {
+    if (selectedElement && selectedElement.type === "area") {
+      setLocalColor(selectedElement.color || "#3b82f6");
+    }
+  }, [selectedElement?.id, selectedElement?.type]);
+
+  // Debounced update for color
+  React.useEffect(() => {
+    if (!selectedElement || selectedElement.type !== "area" || !localColor)
+      return;
+    if (localColor === selectedElement.color) return;
+
+    const timer = setTimeout(() => {
+      updateElement(selectedElement.id, { color: localColor } as Partial<Area>);
+    }, 150); // 150ms debounce
+
+    return () => clearTimeout(timer);
+  }, [localColor, selectedElement?.id, updateElement]);
+
   if (!selectedElement) {
     return (
       <div className="p-6 flex flex-col items-center justify-center text-center gap-4 mt-20">
@@ -329,16 +351,14 @@ export const Inspector: React.FC = () => {
               <div className="flex gap-2 items-center">
                 <input
                   type="color"
-                  value={(selectedElement as Area).color || "#3b82f6"}
-                  onChange={(e) => handleUpdate({ color: e.target.value })}
+                  value={localColor || "#3b82f6"}
+                  onChange={(e) => setLocalColor(e.target.value)}
                   className="w-8 h-8 rounded border border-slate-200 cursor-pointer p-0 overflow-hidden"
                 />
                 <input
                   type="text"
-                  value={
-                    (selectedElement as Area).color || "rgba(59, 130, 246, 0.2)"
-                  }
-                  onChange={(e) => handleUpdate({ color: e.target.value })}
+                  value={localColor || "rgba(59, 130, 246, 0.2)"}
+                  onChange={(e) => setLocalColor(e.target.value)}
                   className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
                 />
               </div>
