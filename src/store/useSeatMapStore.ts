@@ -30,6 +30,12 @@ export const useSeatMapStore = create<EditorState>()(
       seatMap: initialSeatMap,
       selectedIds: [],
       activeTool: "select",
+      draggingId: null,
+      lastMousePosition: null,
+      creationConfig: {
+        rowSeats: 10,
+        tableSeats: 4,
+      },
 
       newMap: () => {
         set({
@@ -373,6 +379,14 @@ export const useSeatMapStore = create<EditorState>()(
         });
       },
 
+      updateCreationConfig: (
+        updates: Partial<EditorState["creationConfig"]>,
+      ) => {
+        set((state) => ({
+          creationConfig: { ...state.creationConfig, ...updates },
+        }));
+      },
+
       draggingId: null,
       lastMousePosition: null,
 
@@ -446,14 +460,15 @@ export const useSeatMapStore = create<EditorState>()(
       },
 
       addRow: (pos) => {
-        const { viewport } = get().seatMap;
+        const { seatMap, creationConfig } = get();
+        const { viewport } = seatMap;
         const position = pos || {
           x: viewport.panX + 100,
           y: viewport.panY + 100,
         };
 
         const seatSpacing = 30;
-        const seatCount = 2;
+        const seatCount = creationConfig.rowSeats;
 
         const newRow: Row = {
           id: `row-${crypto.randomUUID()}`,
@@ -478,7 +493,8 @@ export const useSeatMapStore = create<EditorState>()(
       },
 
       addTable: (pos) => {
-        const { viewport } = get().seatMap;
+        const { seatMap, creationConfig } = get();
+        const { viewport } = seatMap;
         const position = pos || {
           x: viewport.panX + 200,
           y: viewport.panY + 200,
@@ -493,7 +509,7 @@ export const useSeatMapStore = create<EditorState>()(
           shape: "round",
           width: 80,
           height: 80,
-          seats: Array.from({ length: 4 }, (_, i) => ({
+          seats: Array.from({ length: creationConfig.tableSeats }, (_, i) => ({
             id: `s-${crypto.randomUUID()}`,
             type: "seat",
             label: String(i + 1),

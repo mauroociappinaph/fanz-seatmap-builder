@@ -7,7 +7,8 @@ import { LayoutGrid, Circle, Square, MousePointer2 } from "lucide-react";
 import { clsx } from "clsx";
 
 export const Toolbar: React.FC = () => {
-  const { activeTool, setActiveTool } = useSeatMapStore();
+  const { activeTool, setActiveTool, creationConfig, updateCreationConfig } =
+    useSeatMapStore();
 
   return (
     <div className="flex flex-col gap-4">
@@ -175,6 +176,48 @@ export const Toolbar: React.FC = () => {
           </span>
         </button>
       </div>
+
+      {/* Dynamic Tool Config */}
+      {(activeTool === "addRow" || activeTool === "addTable") && (
+        <div className="mt-2 p-3 bg-blue-50/50 rounded-xl border border-blue-100 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+            <span className="text-[10px] uppercase font-bold text-blue-600 tracking-tight">
+              {activeTool === "addRow" ? "Row Settings" : "Table Settings"}
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[9px] font-semibold text-slate-500 ml-1">
+              Initial Seats
+            </span>
+            <div className="flex gap-2">
+              <input
+                type="number"
+                min="1"
+                max="100"
+                value={
+                  activeTool === "addRow"
+                    ? creationConfig.rowSeats
+                    : creationConfig.tableSeats
+                }
+                onChange={(e) => {
+                  const val = Math.max(1, parseInt(e.target.value) || 1);
+                  if (activeTool === "addRow") {
+                    updateCreationConfig({ rowSeats: val });
+                  } else {
+                    updateCreationConfig({ tableSeats: val });
+                  }
+                }}
+                className="w-full px-3 py-1.5 bg-white border border-blue-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium text-slate-700"
+              />
+            </div>
+            <p className="text-[8px] text-blue-400 italic px-1">
+              Click on canvas to place with this count.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

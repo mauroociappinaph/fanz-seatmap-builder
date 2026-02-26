@@ -70,6 +70,10 @@ export interface EditorState {
   activeTool: "select" | "addRow" | "addTable" | "addArea";
   draggingId: string | null;
   lastMousePosition: Position | null;
+  creationConfig: {
+    rowSeats: number;
+    tableSeats: number;
+  };
 
   // Acciones
   newMap: () => void;
@@ -85,6 +89,9 @@ export interface EditorState {
   applyBulkLabels: (pattern: string) => void;
   updateViewport: (updates: Partial<ViewportState>) => void;
   updateSeatCount: (id: string, count: number) => void;
+  updateCreationConfig: (
+    updates: Partial<EditorState["creationConfig"]>,
+  ) => void;
 
   // Acciones para Tarea 8
   setActiveTool: (tool: EditorState["activeTool"]) => void;
