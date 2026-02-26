@@ -45,6 +45,7 @@ const TableSchema = z.object({
   seats: z.array(SeatSchema),
   width: z.number(),
   height: z.number(),
+  capacity: z.number(),
 });
 
 const MapElementSchema = z.discriminatedUnion("type", [

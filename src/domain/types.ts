@@ -69,6 +69,7 @@ export interface Table {
   seats: Seat[];
   width: number; // Diámetro para 'round' o ancho para 'rectangular'
   height: number; // Solo para 'rectangular'
+  capacity: number;
 }
 
 // Definición del estado del Store

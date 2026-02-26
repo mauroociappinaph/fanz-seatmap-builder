@@ -34,6 +34,7 @@ export const ElementFactory = {
       shape: "round",
       width: 80,
       height: 80,
+      capacity,
       seats: Array.from({ length: capacity }, (_, i) => ({
         id: `s-${crypto.randomUUID()}`,
         type: "seat",
