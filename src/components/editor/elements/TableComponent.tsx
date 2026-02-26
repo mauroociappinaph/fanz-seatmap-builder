@@ -14,7 +14,7 @@ export const TableComponent: React.FC<TableComponentProps> = ({ table }) => {
     state.selectedIds.includes(table.id),
   );
   const selectedIds = useSeatMapStore((state) => state.selectedIds);
-  const toggleSelection = useSeatMapStore((state) => state.toggleSelection);
+  const selectElement = useSeatMapStore((state) => state.selectElement);
   const startDragging = useSeatMapStore((state) => state.startDragging);
   const setActiveTool = useSeatMapStore((state) => state.setActiveTool);
 
@@ -25,10 +25,10 @@ export const TableComponent: React.FC<TableComponentProps> = ({ table }) => {
     const svg = (e.currentTarget as SVGElement).ownerSVGElement;
     if (svg) {
       const pos = screenToSVG(e.clientX, e.clientY, svg);
+      const isMulti = e.ctrlKey || e.metaKey;
+
       startDragging(table.id, pos);
-      if (!isSelected) {
-        toggleSelection(table.id);
-      }
+      selectElement(table.id, isMulti);
       setActiveTool("select");
     }
   };
@@ -84,7 +84,7 @@ export const TableComponent: React.FC<TableComponentProps> = ({ table }) => {
           key={seat.id}
           seat={seat}
           isSelected={selectedIds.includes(seat.id)}
-          onClick={() => toggleSelection(seat.id)}
+          onClick={(isMulti) => selectElement(seat.id, isMulti)}
         />
       ))}
     </g>

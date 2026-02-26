@@ -79,6 +79,7 @@ export interface EditorState {
   moveElement: (id: string, position: Position) => void;
   setSelection: (ids: string[]) => void;
   toggleSelection: (id: string) => void;
+  selectElement: (id: string, isMulti?: boolean) => void;
   exportJSON: () => string;
   importJSON: (json: string) => void;
   applyBulkLabels: (pattern: string) => void;

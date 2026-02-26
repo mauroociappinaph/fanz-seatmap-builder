@@ -178,6 +178,23 @@ export const useSeatMapStore = create<EditorState>()(
         }));
       },
 
+      selectElement: (id: string, isMulti?: boolean) => {
+        set((state) => {
+          const currentSelection = state.selectedIds || [];
+          if (isMulti) {
+            // Toggle element in selection
+            return {
+              selectedIds: currentSelection.includes(id)
+                ? currentSelection.filter((sid) => sid !== id)
+                : [...currentSelection, id],
+            };
+          } else {
+            // Set selection to only this element
+            return { selectedIds: [id] };
+          }
+        });
+      },
+
       exportJSON: () => {
         return JSON.stringify(get().seatMap, null, 2);
       },
@@ -336,28 +353,62 @@ export const useSeatMapStore = create<EditorState>()(
       },
 
       handleDragMove: (position) => {
-        const { draggingId, lastMousePosition, seatMap } = get();
-        if (!draggingId || !lastMousePosition) return;
+        const { draggingId, lastMousePosition, seatMap, selectedIds } = get();
+        if (!draggingId || !lastMousePosition || !seatMap) return;
 
         const dx = position.x - lastMousePosition.x;
         const dy = position.y - lastMousePosition.y;
 
-        const element = seatMap.elements.find((el) => el.id === draggingId);
-        if (element && "position" in element) {
-          get().moveElement(draggingId, {
-            x: element.position.x + dx,
-            y: element.position.y + dy,
-          });
-        } else if (element && element.type === "area") {
-          // Special handling for areas (polygons)
-          const newPoints = element.points.map((p) => ({
-            x: p.x + dx,
-            y: p.y + dy,
-          }));
-          get().updateElement(draggingId, { points: newPoints });
-        }
+        // If the dragged element is selected, move the whole selection
+        // Otherwise, just move the dragged element
+        const idsToMove = selectedIds.includes(draggingId)
+          ? selectedIds
+          : [draggingId];
 
-        set({ lastMousePosition: position });
+        set((state) => ({
+          seatMap: {
+            ...state.seatMap,
+            elements: state.seatMap.elements.map((el) => {
+              if (idsToMove.includes(el.id)) {
+                if ("position" in el) {
+                  return {
+                    ...el,
+                    position: { x: el.position.x + dx, y: el.position.y + dy },
+                  } as MapElement;
+                } else if (el.type === "area") {
+                  return {
+                    ...el,
+                    points: el.points.map((p) => ({
+                      x: p.x + dx,
+                      y: p.y + dy,
+                    })),
+                  } as MapElement;
+                }
+              }
+
+              // Handle individual nested seats if they are selected
+              if (el.type === "row" || el.type === "table") {
+                const hasSelectedSeat = el.seats.some((s) =>
+                  idsToMove.includes(s.id),
+                );
+                if (hasSelectedSeat) {
+                  return {
+                    ...el,
+                    seats: el.seats.map((s) =>
+                      idsToMove.includes(s.id)
+                        ? ({ ...s, cx: s.cx + dx, cy: s.cy + dy } as Seat)
+                        : s,
+                    ),
+                  } as MapElement;
+                }
+              }
+
+              return el;
+            }),
+            updatedAt: new Date().toISOString(),
+          },
+          lastMousePosition: position,
+        }));
       },
 
       addRow: (pos) => {

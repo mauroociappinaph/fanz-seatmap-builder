@@ -46,9 +46,12 @@ export const SvgEditor: React.FC = () => {
     }
 
     // Deselect if clicking on the background (the major grid rect or the svg itself)
+    // only if no modifier keys are pressed
     if (
-      e.target === e.currentTarget ||
-      (e.target as Element).id === "bg-grid"
+      (e.target === e.currentTarget ||
+        (e.target as Element).id === "bg-grid") &&
+      !e.ctrlKey &&
+      !e.metaKey
     ) {
       useSeatMapStore.getState().setSelection([]);
     }

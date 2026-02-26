@@ -5,7 +5,7 @@ import { Seat } from "@/domain/types";
 interface SeatComponentProps {
   seat: Seat;
   isSelected: boolean;
-  onClick?: () => void;
+  onClick?: (isMulti: boolean) => void;
 }
 
 export const SeatComponent: React.FC<SeatComponentProps> = ({
@@ -20,7 +20,7 @@ export const SeatComponent: React.FC<SeatComponentProps> = ({
       className="cursor-pointer transition-all duration-200"
       onMouseDown={(e) => {
         e.stopPropagation();
-        onClick?.();
+        onClick?.(e.ctrlKey || e.metaKey);
       }}
     >
       <circle

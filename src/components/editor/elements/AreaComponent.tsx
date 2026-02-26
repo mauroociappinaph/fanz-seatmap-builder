@@ -12,7 +12,7 @@ export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
   const isSelected = useSeatMapStore((state) =>
     state.selectedIds.includes(area.id),
   );
-  const toggleSelection = useSeatMapStore((state) => state.toggleSelection);
+  const selectElement = useSeatMapStore((state) => state.selectElement);
   const startDragging = useSeatMapStore((state) => state.startDragging);
   const setActiveTool = useSeatMapStore((state) => state.setActiveTool);
 
@@ -26,10 +26,10 @@ export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
     const svg = (e.currentTarget as SVGElement).ownerSVGElement;
     if (svg) {
       const pos = screenToSVG(e.clientX, e.clientY, svg);
+      const isMulti = e.ctrlKey || e.metaKey;
+
       startDragging(area.id, pos);
-      if (!isSelected) {
-        toggleSelection(area.id);
-      }
+      selectElement(area.id, isMulti);
       setActiveTool("select");
     }
   };

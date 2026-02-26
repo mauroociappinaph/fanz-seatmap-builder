@@ -13,7 +13,7 @@ export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
   const isSelected = useSeatMapStore((state) =>
     state.selectedIds.includes(row.id),
   );
-  const toggleSelection = useSeatMapStore((state) => state.toggleSelection);
+  const selectElement = useSeatMapStore((state) => state.selectElement);
   const startDragging = useSeatMapStore((state) => state.startDragging);
   const setActiveTool = useSeatMapStore((state) => state.setActiveTool);
   const selectedIds = useSeatMapStore((state) => state.selectedIds);
@@ -25,10 +25,10 @@ export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
     const svg = (e.currentTarget as SVGElement).ownerSVGElement;
     if (svg) {
       const pos = screenToSVG(e.clientX, e.clientY, svg);
+      const isMulti = e.ctrlKey || e.metaKey;
+
       startDragging(row.id, pos);
-      if (!isSelected) {
-        toggleSelection(row.id);
-      }
+      selectElement(row.id, isMulti);
       setActiveTool("select");
     }
   };
@@ -59,7 +59,7 @@ export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
           key={seat.id}
           seat={seat}
           isSelected={selectedIds.includes(seat.id)}
-          onClick={() => toggleSelection(seat.id)}
+          onClick={(isMulti) => selectElement(seat.id, isMulti)}
         />
       ))}
 
