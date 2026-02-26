@@ -34,25 +34,32 @@ export const Inspector: React.FC = () => {
 
   const [localColor, setLocalColor] = React.useState<string>("");
 
+  // Use stable dependencies for hooks
+  const elementId = selectedElement?.id;
+  const elementType = selectedElement?.type;
+  const elementColor =
+    selectedElement && selectedElement.type === "area"
+      ? selectedElement.color
+      : undefined;
+
   // Sync local color when selection changes
   React.useEffect(() => {
-    if (selectedElement && selectedElement.type === "area") {
-      setLocalColor(selectedElement.color || "#3b82f6");
+    if (elementType === "area") {
+      setLocalColor(elementColor || "#3b82f6");
     }
-  }, [selectedElement?.id, selectedElement?.type, selectedElement]);
+  }, [elementId, elementType, elementColor]);
 
   // Debounced update for color
   React.useEffect(() => {
-    if (!selectedElement || selectedElement.type !== "area" || !localColor)
-      return;
-    if (localColor === selectedElement.color) return;
+    if (elementType !== "area" || !localColor || !elementId) return;
+    if (localColor === elementColor) return;
 
     const timer = setTimeout(() => {
-      updateElement(selectedElement.id, { color: localColor } as Partial<Area>);
+      updateElement(elementId, { color: localColor } as Partial<Area>);
     }, 150); // 150ms debounce
 
     return () => clearTimeout(timer);
-  }, [localColor, selectedElement?.id, selectedElement, updateElement]);
+  }, [localColor, elementId, elementType, elementColor, updateElement]);
 
   if (!selectedElement) {
     return (

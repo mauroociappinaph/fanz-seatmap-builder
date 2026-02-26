@@ -144,12 +144,6 @@ export default function Home() {
             >
               {strings.nav.export}
             </button>
-            <button
-              aria-label={strings.nav.publish}
-              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-semibold rounded shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
-            >
-              {strings.nav.publish}
-            </button>
           </div>
         </div>
       </nav>

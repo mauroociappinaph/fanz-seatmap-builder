@@ -18,7 +18,6 @@ export const strings = {
     newMap: "Nuevo Mapa",
     import: "Importar JSON",
     export: "Exportar JSON",
-    publish: "Publicar",
   },
   toolbar: {
     addElements: "Agregar Elementos",
