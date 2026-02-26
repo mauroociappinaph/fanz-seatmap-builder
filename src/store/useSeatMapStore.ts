@@ -80,7 +80,6 @@ export const useSeatMapStore = create<EditorState>()(
                 const filteredSeats = el.seats.filter(
                   (s) => !ids.includes(s.id),
                 );
-                // Use MapService to re-sync labels and properties after seat removal
                 return MapService.refreshLayout({
                   ...el,
                   seats: filteredSeats,
@@ -113,14 +112,15 @@ export const useSeatMapStore = create<EditorState>()(
       updateElement: (id: string, updates: Partial<MapElement | Seat>) => {
         const sanitizedUpdates = { ...updates };
         if ("label" in sanitizedUpdates && sanitizedUpdates.label) {
+          const targetType =
+            (sanitizedUpdates as { type?: string }).type || "row";
           sanitizedUpdates.label = MapService.sanitizeLabel(
             sanitizedUpdates.label,
-            "type" in sanitizedUpdates &&
-              (sanitizedUpdates.type === "row" ||
-                sanitizedUpdates.type === "table" ||
-                sanitizedUpdates.type === "area" ||
-                sanitizedUpdates.type === "seat")
-              ? (sanitizedUpdates.type as MapElement["type"] | "seat")
+            targetType === "row" ||
+              targetType === "table" ||
+              targetType === "area" ||
+              targetType === "seat"
+              ? (targetType as MapElement["type"] | "seat")
               : "row",
           );
         }
