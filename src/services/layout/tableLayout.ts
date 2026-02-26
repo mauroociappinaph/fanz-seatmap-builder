@@ -19,8 +19,8 @@ export const calculateTableSeatPositions = (table: Table): Seat[] => {
       const angle = (i * 2 * Math.PI) / count - Math.PI / 2;
       return {
         ...seat,
-        cx: Math.cos(angle) * radius,
-        cy: Math.sin(angle) * radius,
+        cx: Math.round(Math.cos(angle) * radius * 100) / 100,
+        cy: Math.round(Math.sin(angle) * radius * 100) / 100,
       };
     });
   } else {
@@ -61,8 +61,8 @@ export const calculateTableSeatPositions = (table: Table): Seat[] => {
 
       return {
         ...seat,
-        cx,
-        cy,
+        cx: Math.round(cx * 100) / 100,
+        cy: Math.round(cy * 100) / 100,
       };
     });
   }

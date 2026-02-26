@@ -39,7 +39,7 @@ export const Inspector: React.FC = () => {
     if (selectedElement && selectedElement.type === "area") {
       setLocalColor(selectedElement.color || "#3b82f6");
     }
-  }, [selectedElement?.id, selectedElement?.type]);
+  }, [selectedElement?.id, selectedElement?.type, selectedElement]);
 
   // Debounced update for color
   React.useEffect(() => {
@@ -52,7 +52,7 @@ export const Inspector: React.FC = () => {
     }, 150); // 150ms debounce
 
     return () => clearTimeout(timer);
-  }, [localColor, selectedElement?.id, updateElement]);
+  }, [localColor, selectedElement?.id, selectedElement, updateElement]);
 
   if (!selectedElement) {
     return (
@@ -422,10 +422,11 @@ export const Inspector: React.FC = () => {
       {/* Footer Info */}
       <div className="p-3 bg-slate-50/50 border-t border-slate-100">
         <div className="flex items-center justify-between text-[9px] text-slate-400 font-bold uppercase tracking-widest px-1">
-          <span>ID: {selectedElement.id.split("-")[0]}...</span>
-          <span className="text-blue-500">
-            {strings.common.success} Sync Active
+          <span>
+            {seatMap.elements.length}{" "}
+            {seatMap.elements.length === 1 ? "elemento" : "elementos"}
           </span>
+          <span className="text-blue-500">Auto-guardado activo</span>
         </div>
       </div>
     </div>

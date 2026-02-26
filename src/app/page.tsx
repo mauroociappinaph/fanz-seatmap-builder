@@ -176,14 +176,15 @@ export default function Home() {
 
           <div className="mt-auto p-3 bg-slate-50 rounded-xl border border-slate-200">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
               <span className="text-[10px] uppercase font-bold text-slate-500">
-                {strings.nav.editor} Help
+                Atajos de teclado
               </span>
             </div>
             <p className="text-[10px] leading-relaxed text-slate-400 font-medium">
-              Click elements to select. <br />
-              Drag with middle mouse to move camera.
+              Ctrl+Click: Selección múltiple
+              <br />
+              Alt+Arrastrar: Mover cámara
             </p>
           </div>
         </aside>

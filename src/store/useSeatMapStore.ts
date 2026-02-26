@@ -12,7 +12,6 @@ import {
   MAX_LABEL_LENGTHS,
 } from "@/domain/types";
 import { parsePattern } from "@/services/labeling";
-import { calculateTableSeatPositions } from "@/services/layout/tableLayout";
 import { SeatMapRepository } from "@/services/persistence/seatMapRepository";
 import { strings } from "@/lib/i18n/strings";
 import { ElementFactory } from "@/services/factory/elementFactory";
@@ -45,6 +44,7 @@ export const useSeatMapStore = create<EditorState>()(
           seatMap: {
             ...initialSeatMap,
             id: crypto.randomUUID(),
+            name: strings.nav.newMap,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           },
@@ -80,7 +80,11 @@ export const useSeatMapStore = create<EditorState>()(
                 const filteredSeats = el.seats.filter(
                   (s) => !ids.includes(s.id),
                 );
-                return { ...el, seats: filteredSeats } as MapElement;
+                const updatedEl = { ...el, seats: filteredSeats };
+                if (updatedEl.type === "row") {
+                  updatedEl.seatCount = filteredSeats.length;
+                }
+                return updatedEl as MapElement;
               }
               return el;
             });
@@ -107,7 +111,6 @@ export const useSeatMapStore = create<EditorState>()(
       },
 
       updateElement: (id: string, updates: Partial<MapElement | Seat>) => {
-        // Truncate labels if they exceed limits
         const sanitizedUpdates = { ...updates };
         if ("label" in sanitizedUpdates && sanitizedUpdates.label) {
           sanitizedUpdates.label = MapService.sanitizeLabel(
@@ -129,63 +132,52 @@ export const useSeatMapStore = create<EditorState>()(
               ...(state.seatMap || initialSeatMap),
               elements: elements.map((el): MapElement => {
                 if (el.id === id) {
-                  const updatedEl = {
-                    ...el,
-                    ...sanitizedUpdates,
-                  } as MapElement;
+                  let updatedEl = { ...el, ...sanitizedUpdates } as MapElement;
 
-                  // Force truncation based on final type
+                  // Force truncation
                   const typeLimit = MAX_LABEL_LENGTHS[updatedEl.type];
                   if (updatedEl.label.length > typeLimit) {
                     updatedEl.label = updatedEl.label.slice(0, typeLimit);
                   }
 
-                  // Recalculate Row positions
+                  // Sync seats if capacity or seatCount changed
+                  const hasCapacity = "capacity" in updates;
+                  const hasSeatCount = "seatCount" in updates;
+
+                  if (hasCapacity || hasSeatCount) {
+                    const newCount = hasCapacity
+                      ? (updates as { capacity: number }).capacity
+                      : (updates as { seatCount: number }).seatCount;
+                    updatedEl = MapService.adjustSeatCount(updatedEl, newCount);
+                  }
+
+                  // Recalculate layout if relevant properties changed
                   if (
                     updatedEl.type === "row" &&
                     ("seatSpacing" in updates || "seats" in updates)
                   ) {
-                    const spacing = (updatedEl as Row).seatSpacing || 30;
-                    updatedEl.seats = updatedEl.seats.map((s, i) => ({
+                    const rowEl = updatedEl as Row;
+                    const spacing = rowEl.seatSpacing || 30;
+                    rowEl.seats = rowEl.seats.map((s, i) => ({
                       ...s,
-                      cx: i * spacing,
+                      cx: MapService.roundCoordinate(i * spacing),
                       cy: 0,
                     }));
                   }
 
-                  // Recalculate Table positions (including capacity changes)
                   if (
                     updatedEl.type === "table" &&
                     ("shape" in updates ||
                       "width" in updates ||
                       "height" in updates ||
-                      "seats" in updates ||
-                      "capacity" in (updates as Record<string, unknown>))
+                      "seats" in updates)
                   ) {
                     const tableEl = updatedEl as Table;
-                    if ("capacity" in (updates as Record<string, unknown>)) {
-                      const count = (updates as Record<string, number>)
-                        .capacity;
-                      const currentSeats = [...tableEl.seats];
-                      const diff = count - currentSeats.length;
-
-                      if (diff > 0) {
-                        for (let i = 0; i < diff; i++) {
-                          currentSeats.push({
-                            id: `s-${crypto.randomUUID()}`,
-                            type: "seat",
-                            label: String(currentSeats.length + 1),
-                            cx: 0,
-                            cy: 0,
-                            status: "available",
-                          });
-                        }
-                      } else if (diff < 0) {
-                        currentSeats.splice(count);
-                      }
-                      tableEl.seats = currentSeats;
-                    }
-                    tableEl.seats = calculateTableSeatPositions(tableEl);
+                    const adjustedTable = MapService.adjustSeatCount(
+                      tableEl,
+                      tableEl.seats.length,
+                    ) as Table;
+                    tableEl.seats = adjustedTable.seats;
                   }
 
                   return updatedEl;
