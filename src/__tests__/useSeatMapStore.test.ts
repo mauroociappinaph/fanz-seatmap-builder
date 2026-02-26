@@ -22,6 +22,7 @@ describe("useSeatMapStore", () => {
       rotation: 0,
       seats: [],
       seatSpacing: 10,
+      seatCount: 0,
     };
 
     useSeatMapStore.getState().addElement(newRow);
@@ -39,6 +40,7 @@ describe("useSeatMapStore", () => {
       rotation: 0,
       seats: [],
       seatSpacing: 10,
+      seatCount: 0,
     };
 
     useSeatMapStore.getState().addElement(newRow);
@@ -56,6 +58,7 @@ describe("useSeatMapStore", () => {
       rotation: 0,
       seats: [],
       seatSpacing: 10,
+      seatCount: 0,
     };
 
     useSeatMapStore.getState().addElement(newRow);

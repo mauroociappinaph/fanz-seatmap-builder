@@ -274,6 +274,7 @@ export const useSeatMapStore = create<EditorState>()(
           position,
           rotation: 0,
           seatSpacing: 30,
+          seatCount: 2, // Initialize with the number of seats created by default
           seats: [
             {
               id: `s-${crypto.randomUUID()}`,
