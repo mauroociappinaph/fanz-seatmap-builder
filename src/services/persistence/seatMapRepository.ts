@@ -1,6 +1,7 @@
 // src/services/persistence/seatMapRepository.ts
 import { SeatMap } from "@/domain/types";
 import { validateSeatMap } from "./jsonMapper";
+import { MapService } from "../domain/mapService";
 
 export interface ISeatMapRepository {
   save(seatMap: SeatMap): void;
@@ -16,9 +17,11 @@ export interface ISeatMapRepository {
 export const SeatMapRepository: ISeatMapRepository = {
   /**
    * Serializes a SeatMap object to a formatted JSON string.
+   * Includes a final cleanup phase to ensure data integrity.
    */
   serialize(seatMap: SeatMap): string {
-    return JSON.stringify(seatMap, null, 2);
+    const cleanData = MapService.cleanMapData(seatMap);
+    return JSON.stringify(cleanData, null, 2);
   },
 
   /**
@@ -28,7 +31,9 @@ export const SeatMapRepository: ISeatMapRepository = {
   deserialize(json: string): SeatMap {
     try {
       const data = JSON.parse(json);
-      return validateSeatMap(data);
+      const validated = validateSeatMap(data);
+      // Clean data upon import as well to handle legacy bad files
+      return MapService.cleanMapData(validated);
     } catch (error) {
       console.error("Repository: Failed to deserialize SeatMap", error);
       throw error;

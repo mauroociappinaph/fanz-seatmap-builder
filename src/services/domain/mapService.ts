@@ -1,5 +1,11 @@
 // src/services/domain/mapService.ts
-import { MapElement, MAX_LABEL_LENGTHS, Row, Table } from "../../domain/types";
+import {
+  MapElement,
+  MAX_LABEL_LENGTHS,
+  Row,
+  Table,
+  SeatMap,
+} from "../../domain/types";
 import { calculateTableSeatPositions } from "../layout/tableLayout";
 
 export const MapService = {
@@ -79,11 +85,13 @@ export const MapService = {
    */
   sanitizeLabel: (label: string, type: MapElement["type"] | "seat"): string => {
     const limit = MAX_LABEL_LENGTHS[type];
-    // Special fix for ", Área" typo - ensure label doesn't start with comma space
-    let cleanLabel = label.trim();
-    if (cleanLabel.startsWith(", ")) {
-      cleanLabel = cleanLabel.substring(2);
-    }
+
+    // Aggressive cleanup for typos like ", Área"
+    const cleanLabel = label
+      .trim()
+      .replace(/^[,.\s]+/, "") // Remove leading commas, dots, or spaces
+      .replace(/[,.\s]+$/, ""); // Remove trailing commas, dots, or spaces
+
     return cleanLabel.slice(0, limit);
   },
 
@@ -91,4 +99,51 @@ export const MapService = {
    * Helper to round coordinates to prevent floating point drift.
    */
   roundCoordinate: (val: number): number => Math.round(val * 100) / 100,
+
+  /**
+   * Deep cleans the seat map data before export.
+   * Removes empty rows/tables and sanitizes all data.
+   */
+  cleanMapData: (seatMap: SeatMap): SeatMap => {
+    return {
+      ...seatMap,
+      elements: seatMap.elements
+        .filter((el) => {
+          // Remove rows/tables with 0 seats (Ghost Elements)
+          if (
+            (el.type === "row" || el.type === "table") &&
+            el.seats.length === 0
+          ) {
+            return false;
+          }
+          return true;
+        })
+        .map((el) => {
+          // Final label sanitization
+          const cleanEl = {
+            ...el,
+            label: MapService.sanitizeLabel(el.label, el.type),
+          };
+
+          if (cleanEl.type === "row" || cleanEl.type === "table") {
+            cleanEl.seats = cleanEl.seats.map((s) => ({
+              ...s,
+              label: MapService.sanitizeLabel(s.label, "seat"),
+              cx: MapService.roundCoordinate(s.cx),
+              cy: MapService.roundCoordinate(s.cy),
+            }));
+          }
+
+          if ("position" in cleanEl) {
+            cleanEl.position = {
+              x: MapService.roundCoordinate(cleanEl.position.x),
+              y: MapService.roundCoordinate(cleanEl.position.y),
+            };
+          }
+
+          return cleanEl as MapElement;
+        }),
+      updatedAt: new Date().toISOString(),
+    };
+  },
 };
