@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useSeatMapStore } from "@/store";
 
 export const useViewport = () => {
@@ -8,7 +8,8 @@ export const useViewport = () => {
   // Safety fallback if viewport is missing (e.g. during hydration or bad import)
   const viewport = seatMap?.viewport || { zoom: 1, panX: 0, panY: 0 };
 
-  const isPanning = useRef(false);
+  const [isPanningState, setIsPanningState] = useState(false);
+  const isPanningRef = useRef(false);
   const lastMousePos = useRef({ x: 0, y: 0 });
   const rafRef = useRef<number | null>(null);
 
@@ -34,14 +35,15 @@ export const useViewport = () => {
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button === 1 || (e.button === 0 && e.altKey)) {
-      isPanning.current = true;
+      isPanningRef.current = true;
+      setIsPanningState(true);
       lastMousePos.current = { x: e.clientX, y: e.clientY };
     }
   }, []);
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
-      if (!isPanning.current) return;
+      if (!isPanningRef.current) return;
 
       const dx = (e.clientX - lastMousePos.current.x) / viewport.zoom;
       const dy = (e.clientY - lastMousePos.current.y) / viewport.zoom;
@@ -62,7 +64,8 @@ export const useViewport = () => {
   );
 
   const handleMouseUp = useCallback(() => {
-    isPanning.current = false;
+    isPanningRef.current = false;
+    setIsPanningState(false);
   }, []);
 
   const screenToSVG = useCallback(
@@ -90,5 +93,6 @@ export const useViewport = () => {
     handleMouseMove,
     handleMouseUp,
     screenToSVG,
+    isPanning: isPanningState,
   };
 };

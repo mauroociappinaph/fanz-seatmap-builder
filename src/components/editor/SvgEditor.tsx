@@ -5,9 +5,12 @@ import React from "react";
 import { useViewport } from "@/hooks/useViewport";
 import { useSeatMapStore } from "@/store";
 import { MapElements } from "./MapElements";
+import { clsx } from "clsx";
 
 export const SvgEditor: React.FC = () => {
   const svgRef = React.useRef<SVGSVGElement>(null);
+  const [isAltPressed, setIsAltPressed] = React.useState(false);
+
   const {
     viewport,
     handleWheel,
@@ -15,6 +18,7 @@ export const SvgEditor: React.FC = () => {
     handleMouseMove: viewportMouseMove,
     handleMouseUp: viewportMouseUp,
     screenToSVG,
+    isPanning,
   } = useViewport();
 
   const {
@@ -27,6 +31,23 @@ export const SvgEditor: React.FC = () => {
     draggingId,
   } = useSeatMapStore();
 
+  // Handle Alt key listeners for cursor feedback
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Alt") setIsAltPressed(true);
+    };
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "Alt") setIsAltPressed(false);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
+
   // Debería ser dinámico basado en el contenedor
   const width = 1200;
   const height = 800;
@@ -34,6 +55,13 @@ export const SvgEditor: React.FC = () => {
   const vbWidth = width / viewport.zoom;
   const vbHeight = height / viewport.zoom;
   const viewBox = `${viewport.panX} ${viewport.panY} ${vbWidth} ${vbHeight}`;
+
+  // Determine cursor based on state
+  const getCursorClass = () => {
+    if (isPanning) return "cursor-grabbing";
+    if (isAltPressed) return "cursor-grab";
+    return "cursor-crosshair";
+  };
 
   const onMouseDown = (e: React.MouseEvent) => {
     // Si hay una herramienta de creación activa, colocamos el elemento
@@ -91,7 +119,10 @@ export const SvgEditor: React.FC = () => {
         onMouseLeave={onMouseUp}
         tabIndex={0}
         focusable="true"
-        className="cursor-crosshair block outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20"
+        className={clsx(
+          getCursorClass(),
+          "block outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20",
+        )}
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
