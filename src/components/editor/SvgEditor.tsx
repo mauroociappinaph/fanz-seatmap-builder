@@ -89,7 +89,9 @@ export const SvgEditor: React.FC = () => {
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
         onMouseLeave={onMouseUp}
-        className="cursor-crosshair block"
+        tabIndex={0}
+        focusable="true"
+        className="cursor-crosshair block outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>

@@ -47,7 +47,8 @@ export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
         }
       }}
       tabIndex={0}
-      className="group cursor-move outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+      focusable="true"
+      className="group cursor-move outline-none"
       role="group"
       aria-label={`Row ${row.label}, ${row.seats.length} seats`}
     >

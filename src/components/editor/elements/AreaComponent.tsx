@@ -47,7 +47,8 @@ export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
         }
       }}
       tabIndex={0}
-      className="group cursor-move outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+      focusable="true"
+      className="group cursor-move outline-none"
       role="region"
       aria-label={`Area ${area.label}`}
     >

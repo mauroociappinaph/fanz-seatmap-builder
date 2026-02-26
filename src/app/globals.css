@@ -47,11 +47,19 @@
 }
 
 /* Custom SVG Focus styles for Accessibility */
-g[tabindex="0"]:focus-visible {
-  outline: 2px solid #3b82f6;
-  outline-offset: 4px;
+g[tabindex="0"]:focus-visible circle,
+g[tabindex="0"]:focus-visible rect,
+g[tabindex="0"]:focus-visible polygon {
+  stroke: #3b82f6 !important;
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.5));
 }
 
-g[tabindex="0"]:focus:not(:focus-visible) {
+g[tabindex="0"]:focus {
   outline: none;
+}
+
+svg:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
 }

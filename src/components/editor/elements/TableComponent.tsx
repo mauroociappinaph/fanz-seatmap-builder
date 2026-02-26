@@ -47,7 +47,8 @@ export const TableComponent: React.FC<TableComponentProps> = ({ table }) => {
         }
       }}
       tabIndex={0}
-      className="group cursor-move outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+      focusable="true"
+      className="group cursor-move outline-none"
       role="group"
       aria-label={`Table ${table.label}, ${table.shape} shape, ${table.seats.length} seats`}
     >
