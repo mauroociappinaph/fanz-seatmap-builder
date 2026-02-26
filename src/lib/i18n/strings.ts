@@ -71,6 +71,7 @@ export const strings = {
     newMapSuccess: "Nuevo mapa creado",
     importSuccess: "Mapa importado correctamente",
     importError: "Error al importar el mapa: JSON inválido",
+    importLimitError: "El archivo es demasiado grande (máximo 5MB)",
     exportSuccess: "Mapa exportado y descargado",
   },
   elements: {

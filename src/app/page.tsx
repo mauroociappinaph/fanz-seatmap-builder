@@ -59,6 +59,14 @@ export default function Home() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Limit file size to 5MB (Bug B28)
+    const MAX_SIZE = 5 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      toast.error(strings.messages.importLimitError);
+      e.target.value = "";
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
