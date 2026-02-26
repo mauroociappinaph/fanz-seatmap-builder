@@ -21,6 +21,16 @@ export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
   // Convert points array to SVG polygon string
   const pointsString = area.points.map((p) => `${p.x},${p.y}`).join(" ");
 
+  // Calculate centroid for better label positioning
+  const centroid = React.useMemo(() => {
+    if (area.points.length === 0) return { x: 0, y: 0 };
+    const sum = area.points.reduce(
+      (acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }),
+      { x: 0, y: 0 },
+    );
+    return { x: sum.x / area.points.length, y: sum.y / area.points.length };
+  }, [area.points]);
+
   const onMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation();
     const svg = (e.currentTarget as SVGElement).ownerSVGElement;
@@ -39,6 +49,7 @@ export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
 
   return (
     <g
+      transform="translate(0,0)"
       onMouseDown={onMouseDown}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -62,14 +73,16 @@ export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
         style={{ fillOpacity: isSelected ? 0.3 : 0.1 }}
       />
 
-      {/* Area Label (at the first point or center) */}
+      {/* Area Label (centered at centroid for better UX) */}
       <text
-        x={area.points[0]?.x || 0}
-        y={(area.points[0]?.y || 0) - 10}
+        x={centroid.x}
+        y={centroid.y}
+        textAnchor="middle"
+        dominantBaseline="central"
         fontSize={14}
         fontWeight="bold"
         fill={isSelected ? "#2563eb" : "#64748b"}
-        className="select-none pointer-events-none"
+        className="select-none pointer-events-none drop-shadow-sm"
       >
         {area.label}
       </text>
