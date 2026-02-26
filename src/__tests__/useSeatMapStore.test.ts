@@ -167,4 +167,45 @@ describe("useSeatMapStore", () => {
     expect(useSeatMapStore.getState().draggingId).toBeNull();
     expect(useSeatMapStore.getState().lastMousePosition).toBeNull();
   });
+
+  it("should enforce maximum label lengths", () => {
+    const rowId = "test-row";
+    const longLabel = "A".repeat(100);
+
+    const newRow: Row = {
+      id: rowId,
+      type: "row",
+      label: "Initial",
+      position: { x: 0, y: 0 },
+      rotation: 0,
+      seats: [
+        {
+          id: "s1",
+          type: "seat",
+          label: "1",
+          cx: 0,
+          cy: 0,
+          status: "available",
+        },
+      ],
+      seatSpacing: 10,
+      seatCount: 1,
+    };
+
+    useSeatMapStore.getState().addElement(newRow);
+
+    // Test truncation for Row label (limit 50)
+    useSeatMapStore.getState().updateElement(rowId, { label: longLabel });
+    let updatedRow = useSeatMapStore
+      .getState()
+      .seatMap.elements.find((el) => el.id === rowId) as Row;
+    expect(updatedRow.label.length).toBe(50);
+
+    // Test truncation for Seat label (limit 10)
+    useSeatMapStore.getState().updateElement("s1", { label: longLabel });
+    updatedRow = useSeatMapStore
+      .getState()
+      .seatMap.elements.find((el) => el.id === rowId) as Row;
+    expect(updatedRow.seats[0].label.length).toBe(10);
+  });
 });

@@ -10,6 +10,7 @@ import {
   Table,
   Area,
   Seat,
+  MAX_LABEL_LENGTHS,
 } from "@/domain/types";
 import { parsePattern } from "@/services/labeling";
 import { calculateTableSeatPositions } from "@/services/layout/tableLayout";
@@ -107,6 +108,18 @@ export const useSeatMapStore = create<EditorState>()(
       },
 
       updateElement: (id: string, updates: Partial<MapElement | Seat>) => {
+        // Truncate labels if they exceed limits
+        const sanitizedUpdates = { ...updates };
+        if ("label" in sanitizedUpdates && sanitizedUpdates.label) {
+          // If we don't have the type in updates, we'll check it during the map process
+          // But if we do, we can pre-sanitize
+          const limit =
+            "type" in sanitizedUpdates && sanitizedUpdates.type === "seat"
+              ? MAX_LABEL_LENGTHS.seat
+              : 50; // default safe limit for groups
+          sanitizedUpdates.label = sanitizedUpdates.label.slice(0, limit);
+        }
+
         set((state) => {
           const elements = state.seatMap?.elements || [];
           return {
@@ -115,7 +128,16 @@ export const useSeatMapStore = create<EditorState>()(
               elements: elements.map((el): MapElement => {
                 if (el.id === id) {
                   // Root element update
-                  const updatedEl = { ...el, ...updates } as MapElement;
+                  const updatedEl = {
+                    ...el,
+                    ...sanitizedUpdates,
+                  } as MapElement;
+
+                  // Force truncation based on final type
+                  const typeLimit = MAX_LABEL_LENGTHS[updatedEl.type];
+                  if (updatedEl.label.length > typeLimit) {
+                    updatedEl.label = updatedEl.label.slice(0, typeLimit);
+                  }
 
                   // Si es una fila y se actualizó el espaciado o los asientos, recalculamos posiciones
                   if (
@@ -179,10 +201,17 @@ export const useSeatMapStore = create<EditorState>()(
                     const newSeats = [...el.seats];
                     newSeats[seatIndex] = {
                       ...newSeats[seatIndex],
-                      ...updates,
+                      ...sanitizedUpdates,
                     } as Seat;
-                    // Ensure type stays 'seat'
+                    // Ensure type stays 'seat' and label is limited
                     newSeats[seatIndex].type = "seat";
+                    if (
+                      newSeats[seatIndex].label.length > MAX_LABEL_LENGTHS.seat
+                    ) {
+                      newSeats[seatIndex].label = newSeats[
+                        seatIndex
+                      ].label.slice(0, MAX_LABEL_LENGTHS.seat);
+                    }
 
                     return { ...el, seats: newSeats } as MapElement;
                   }
@@ -289,7 +318,9 @@ export const useSeatMapStore = create<EditorState>()(
               // Si el elemento raíz está seleccionado, lo etiquetamos
               if (selectedIds.includes(el.id)) {
                 const index = selectedIds.indexOf(el.id);
-                const label = labels[index % labels.length];
+                let label = labels[index % labels.length];
+                // Truncate based on type
+                label = label.slice(0, MAX_LABEL_LENGTHS[el.type]);
                 return { ...el, label } as MapElement;
               }
 
@@ -298,7 +329,9 @@ export const useSeatMapStore = create<EditorState>()(
                 const updatedSeats = el.seats.map((s) => {
                   if (selectedIds.includes(s.id)) {
                     const index = selectedIds.indexOf(s.id);
-                    const label = labels[index % labels.length];
+                    let label = labels[index % labels.length];
+                    // Truncate for seats
+                    label = label.slice(0, MAX_LABEL_LENGTHS.seat);
                     return { ...s, label };
                   }
                   return s;

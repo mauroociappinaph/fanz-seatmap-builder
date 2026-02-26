@@ -22,6 +22,14 @@ export interface SeatMap {
 
 export type MapElement = Row | Area | Table;
 
+export const MAX_LABEL_LENGTHS = {
+  seat: 10,
+  row: 50,
+  table: 50,
+  area: 50,
+  mapName: 100,
+} as const;
+
 export interface Row {
   id: string;
   type: "row";
