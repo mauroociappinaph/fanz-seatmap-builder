@@ -49,15 +49,12 @@ export const SeatComponent: React.FC<SeatComponentProps> = ({
           y={seat.cy}
           textAnchor="middle"
           dominantBaseline="central"
-          fontSize={6}
+          fontSize={8}
           fontWeight="bold"
           fill={isSelected ? "white" : "#64748b"}
-          className="pointer-events-none select-none"
-          textLength={16} // Force squeeze if label is too wide
-          lengthAdjust="spacingAndGlyphs"
+          className="pointer-events-none select-none font-sans"
         >
-          {/* React automatically sanitizes strings, but we ensure it's treated as plain text */}
-          {String(seat.label)}
+          {seat.label}
         </text>
       )}
     </g>
