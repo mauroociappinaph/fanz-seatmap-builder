@@ -1,14 +1,18 @@
 // src/services/factory/elementFactory.ts
 import { Row, Table, Area, Position } from "../../domain/types";
 import { calculateTableSeatPositions } from "../layout/tableLayout";
-import { strings } from "../../lib/i18n/strings";
 
 export const ElementFactory = {
-  createRow: (pos: Position, seatCount: number, seatSpacing: number): Row => {
+  createRow: (
+    pos: Position,
+    seatCount: number,
+    seatSpacing: number,
+    label: string,
+  ): Row => {
     return {
       id: `row-${crypto.randomUUID()}`,
       type: "row",
-      label: strings.elements.newRow,
+      label,
       position: pos,
       rotation: 0,
       seatSpacing,
@@ -24,11 +28,11 @@ export const ElementFactory = {
     };
   },
 
-  createTable: (pos: Position, capacity: number): Table => {
+  createTable: (pos: Position, capacity: number, label: string): Table => {
     const table: Table = {
       id: `table-${crypto.randomUUID()}`,
       type: "table",
-      label: strings.elements.newTable,
+      label,
       position: pos,
       rotation: 0,
       shape: "round",
@@ -50,11 +54,11 @@ export const ElementFactory = {
     return table;
   },
 
-  createArea: (pos: Position): Area => {
+  createArea: (pos: Position, label: string): Area => {
     return {
       id: `area-${crypto.randomUUID()}`,
       type: "area",
-      label: strings.elements.newArea,
+      label,
       points: [
         { x: pos.x, y: pos.y },
         { x: pos.x + 150, y: pos.y },

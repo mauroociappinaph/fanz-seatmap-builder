@@ -137,13 +137,11 @@ export const useSeatMapStore = create<EditorState>()(
                     ...sanitizedUpdates,
                   } as MapElement;
 
-                  // Force truncation
                   const typeLimit = MAX_LABEL_LENGTHS[updatedEl.type];
                   if (updatedEl.label.length > typeLimit) {
                     updatedEl.label = updatedEl.label.slice(0, typeLimit);
                   }
 
-                  // Sync seats if capacity or seatCount changed
                   const hasCapacity = "capacity" in updates;
                   const hasSeatCount = "seatCount" in updates;
 
@@ -154,7 +152,6 @@ export const useSeatMapStore = create<EditorState>()(
                     updatedEl = MapService.adjustSeatCount(updatedEl, newCount);
                   }
 
-                  // Recalculate layout if relevant properties changed
                   if (
                     updatedEl.type === "row" &&
                     ("seatSpacing" in updates || "seats" in updates)
@@ -164,8 +161,6 @@ export const useSeatMapStore = create<EditorState>()(
 
                   if (updatedEl.type === "table") {
                     const tableEl = updatedEl as Table;
-
-                    // Adjust dimensions when changing shape
                     if ("shape" in updates) {
                       const newShape = (
                         updates as {
@@ -186,8 +181,6 @@ export const useSeatMapStore = create<EditorState>()(
                         tableEl.height = avg;
                       }
                     }
-
-                    // Recalculate seat positions and sync
                     if (
                       "shape" in updates ||
                       "width" in updates ||
@@ -201,7 +194,6 @@ export const useSeatMapStore = create<EditorState>()(
                   return updatedEl;
                 }
 
-                // Nested seat update
                 if (el.type === "row" || el.type === "table") {
                   const seatIndex = el.seats.findIndex((s) => s.id === id);
                   if (seatIndex !== -1) {
@@ -454,10 +446,16 @@ export const useSeatMapStore = create<EditorState>()(
           y: seatMap.viewport.panY + 100,
         };
 
+        const existingCount = seatMap.elements.filter(
+          (el) => el.type === "row",
+        ).length;
+        const label = `${strings.elements.newRow} ${existingCount + 1}`;
+
         const newRow = ElementFactory.createRow(
           position,
           creationConfig.rowSeats,
           30,
+          label,
         );
         get().addElement(newRow);
         get().setSelection([newRow.id]);
@@ -471,9 +469,15 @@ export const useSeatMapStore = create<EditorState>()(
           y: seatMap.viewport.panY + 200,
         };
 
+        const existingCount = seatMap.elements.filter(
+          (el) => el.type === "table",
+        ).length;
+        const label = `${strings.elements.newTable} ${existingCount + 1}`;
+
         const newTable = ElementFactory.createTable(
           position,
           creationConfig.tableSeats,
+          label,
         );
         get().addElement(newTable);
         get().setSelection([newTable.id]);
@@ -487,7 +491,12 @@ export const useSeatMapStore = create<EditorState>()(
           y: seatMap.viewport.panY + 150,
         };
 
-        const newArea = ElementFactory.createArea(startPos);
+        const existingCount = seatMap.elements.filter(
+          (el) => el.type === "area",
+        ).length;
+        const label = `${strings.elements.newArea} ${existingCount + 1}`;
+
+        const newArea = ElementFactory.createArea(startPos, label);
         get().addElement(newArea);
         get().setSelection([newArea.id]);
         get().setActiveTool("select");

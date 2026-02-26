@@ -74,9 +74,9 @@ export const strings = {
     exportSuccess: "Mapa exportado y descargado",
   },
   elements: {
-    newRow: "Nueva Fila",
-    newTable: "T",
-    newArea: "Nueva Área",
+    newRow: "Fila",
+    newTable: "Mesa",
+    newArea: "Área",
     rowLabel: "Fila",
     tableLabel: "Mesa",
     areaLabel: "Área",
