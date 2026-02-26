@@ -11,7 +11,7 @@ const SeatSchema = z.object({
   id: z.string(),
   type: z.literal("seat"),
   label: z.string(),
-  status: z.enum(["available", "selected", "blocked"]),
+  status: z.enum(["available", "selected", "blocked", "occupied"]),
   cx: z.number(),
   cy: z.number(),
 });
