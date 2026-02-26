@@ -140,16 +140,32 @@ export const useSeatMapStore = create<EditorState>()(
         const labels = parsePattern(pattern);
         const { selectedIds, seatMap } = get();
 
+        if (labels.length === 0 || selectedIds.length === 0) return;
+
         set({
           seatMap: {
             ...seatMap,
             elements: seatMap.elements.map((el) => {
+              // Si el elemento raíz está seleccionado, lo etiquetamos
               if (selectedIds.includes(el.id)) {
                 const index = selectedIds.indexOf(el.id);
-                // Cycle through labels if there are more elements than labels
                 const label = labels[index % labels.length];
                 return { ...el, label } as MapElement;
               }
+
+              // Si es una fila o mesa, buscamos asientos seleccionados dentro
+              if (el.type === "row" || el.type === "table") {
+                const updatedSeats = el.seats.map((s) => {
+                  if (selectedIds.includes(s.id)) {
+                    const index = selectedIds.indexOf(s.id);
+                    const label = labels[index % labels.length];
+                    return { ...s, label };
+                  }
+                  return s;
+                });
+                return { ...el, seats: updatedSeats };
+              }
+
               return el;
             }),
             updatedAt: new Date().toISOString(),
@@ -165,6 +181,45 @@ export const useSeatMapStore = create<EditorState>()(
             updatedAt: new Date().toISOString(),
           },
         }));
+      },
+
+      updateSeatCount: (id: string, count: number) => {
+        const { seatMap } = get();
+        set({
+          seatMap: {
+            ...seatMap,
+            elements: seatMap.elements.map((el) => {
+              if (el.id === id && (el.type === "row" || el.type === "table")) {
+                const currentSeats = el.seats || [];
+                const diff = count - currentSeats.length;
+
+                let newSeats = [...currentSeats];
+                if (diff > 0) {
+                  // Add seats
+                  for (let i = 0; i < diff; i++) {
+                    const index = currentSeats.length + i;
+                    newSeats.push({
+                      id: `s-${crypto.randomUUID()}`,
+                      type: "seat",
+                      label: String(index + 1),
+                      cx:
+                        el.type === "row" ? index * (el.seatSpacing || 30) : 0,
+                      cy: 0,
+                      status: "available",
+                    });
+                  }
+                } else if (diff < 0) {
+                  // Remove seats
+                  newSeats = newSeats.slice(0, count);
+                }
+
+                return { ...el, seats: newSeats };
+              }
+              return el;
+            }),
+            updatedAt: new Date().toISOString(),
+          },
+        });
       },
 
       draggingId: null,

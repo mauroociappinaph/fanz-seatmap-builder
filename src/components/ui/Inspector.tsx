@@ -81,6 +81,50 @@ export const Inspector: React.FC = () => {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        {/* Section: Bulk Labeling (Visible when 1+ elements selected) */}
+        <div className="space-y-4 pb-4 border-b border-slate-100">
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+            <Hash className="w-3 h-3" /> Bulk Labeling
+          </label>
+          <div className="flex flex-col gap-2">
+            <p className="text-[9px] text-slate-400 font-medium leading-tight">
+              Use patterns like{" "}
+              <code className="text-blue-500">{"A{1..10}"}</code> or{" "}
+              <code className="text-blue-500">{"{A..Z}1"}</code> to label
+              selected elements.
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="e.g. A{1..10}"
+                id="bulk-label-pattern"
+                className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    const input = e.currentTarget;
+                    useSeatMapStore.getState().applyBulkLabels(input.value);
+                    input.value = "";
+                  }
+                }}
+              />
+              <button
+                onClick={() => {
+                  const input = document.getElementById(
+                    "bulk-label-pattern",
+                  ) as HTMLInputElement;
+                  if (input) {
+                    useSeatMapStore.getState().applyBulkLabels(input.value);
+                    input.value = "";
+                  }
+                }}
+                className="px-3 py-2 bg-blue-600 text-white text-[10px] font-bold uppercase rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Section: General */}
         <div className="space-y-4">
           <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
@@ -166,23 +210,63 @@ export const Inspector: React.FC = () => {
           </label>
 
           {selectedElement.type === "row" && (
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[10px] font-semibold text-slate-500 ml-1">
-                Seat Spacing
-              </span>
-              <input
-                type="number"
-                value={(selectedElement as Row).seatSpacing}
-                onChange={(e) =>
-                  handleUpdate({ seatSpacing: Number(e.target.value) })
-                }
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
-              />
-            </div>
+            <>
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[10px] font-semibold text-slate-500 ml-1">
+                  Seat Count
+                </span>
+                <input
+                  type="number"
+                  min="1"
+                  value={(selectedElement as Row).seats.length}
+                  onChange={(e) =>
+                    useSeatMapStore
+                      .getState()
+                      .updateSeatCount(
+                        selectedElement.id,
+                        Number(e.target.value),
+                      )
+                  }
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[10px] font-semibold text-slate-500 ml-1">
+                  Seat Spacing
+                </span>
+                <input
+                  type="number"
+                  value={(selectedElement as Row).seatSpacing}
+                  onChange={(e) =>
+                    handleUpdate({ seatSpacing: Number(e.target.value) })
+                  }
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
+                />
+              </div>
+            </>
           )}
 
           {selectedElement.type === "table" && (
             <div className="space-y-3">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[10px] font-semibold text-slate-500 ml-1">
+                  Capacity (Seats)
+                </span>
+                <input
+                  type="number"
+                  min="1"
+                  value={(selectedElement as Table).seats.length}
+                  onChange={(e) =>
+                    useSeatMapStore
+                      .getState()
+                      .updateSeatCount(
+                        selectedElement.id,
+                        Number(e.target.value),
+                      )
+                  }
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
+                />
+              </div>
               <div className="flex flex-col gap-1.5">
                 <span className="text-[10px] font-semibold text-slate-500 ml-1">
                   Shape

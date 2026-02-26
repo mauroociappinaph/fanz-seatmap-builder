@@ -30,6 +30,7 @@ export interface Row {
   rotation: number;
   seats: Seat[];
   seatSpacing: number;
+  seatCount: number;
 }
 
 export interface Seat {
@@ -82,6 +83,7 @@ export interface EditorState {
   importJSON: (json: string) => void;
   applyBulkLabels: (pattern: string) => void;
   updateViewport: (updates: Partial<ViewportState>) => void;
+  updateSeatCount: (id: string, count: number) => void;
 
   // Acciones para Tarea 8
   setActiveTool: (tool: EditorState["activeTool"]) => void;

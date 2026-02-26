@@ -74,8 +74,8 @@
 
 #### Tarea 8: Flujo de Colocación de Elementos y Drag to Move
 - **Objetivo:** Implementar la interacción principal para posicionar elementos en el canvas.
-- [ ] Implementar la lógica para colocar nuevos elementos en el canvas.
-- [ ] Implementar la funcionalidad de arrastrar y soltar para mover los elementos seleccionados.
+- [x] Implementar la lógica para colocar nuevos elementos en el canvas.
+- [x] Implementar la funcionalidad de arrastrar y soltar para mover los elementos seleccionados.
 
 ---
 
@@ -84,6 +84,7 @@
 #### Tarea 9: Refinamiento de UI/UX (Benchmarking Seats.io)
 - **Objetivo:** Lograr una calidad visual de alta fidelidad y una UX intuitiva.
 - [ ] Aplicar estilo profesional (ej: Dark Glassmorphism).
+- [x] Implementar UI de Etiquetado Masivo en Inspector.
 - [ ] Pulir transiciones, estados hover y comportamiento responsivo.
 
 #### Tarea 10: Flujo Git, Entrega y Auditoría de IA
