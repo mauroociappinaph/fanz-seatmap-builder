@@ -70,7 +70,10 @@ export const Inspector: React.FC = () => {
             <Hash className="w-3.5 h-3.5 text-blue-600" />
           </div>
           <span className="text-xs font-bold text-slate-700 uppercase tracking-tight">
-            {selectedElement.type}
+            {selectedElement.type}{" "}
+            {selectedElement.type === "seat"
+              ? `(Label: ${selectedElement.label})`
+              : ""}
           </span>
         </div>
         <button
@@ -259,12 +262,9 @@ export const Inspector: React.FC = () => {
                   min="1"
                   value={(selectedElement as Table).seats.length}
                   onChange={(e) =>
-                    useSeatMapStore
-                      .getState()
-                      .updateSeatCount(
-                        selectedElement.id,
-                        Number(e.target.value),
-                      )
+                    handleUpdate({
+                      capacity: Number(e.target.value),
+                    } as Partial<Table>)
                   }
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
                 />

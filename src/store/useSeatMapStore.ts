@@ -115,15 +115,41 @@ export const useSeatMapStore = create<EditorState>()(
                     }));
                   }
 
-                  // Si es una mesa y cambió forma o dimensiones o asientos, recalculamos
+                  // Si es una mesa y cambió forma o dimensiones o asientos o capacidad, recalculamos
                   if (
                     updatedEl.type === "table" &&
                     ("shape" in updates ||
                       "width" in updates ||
                       "height" in updates ||
-                      "seats" in updates)
+                      "seats" in updates ||
+                      "capacity" in (updates as Record<string, unknown>))
                   ) {
                     const tableEl = updatedEl as Table;
+
+                    // Support for capacity update via generic updateElement
+                    if ("capacity" in (updates as Record<string, unknown>)) {
+                      const count = (updates as Record<string, number>)
+                        .capacity;
+                      const currentSeats = [...tableEl.seats];
+                      const diff = count - currentSeats.length;
+
+                      if (diff > 0) {
+                        for (let i = 0; i < diff; i++) {
+                          currentSeats.push({
+                            id: `s-${crypto.randomUUID()}`,
+                            type: "seat",
+                            label: String(currentSeats.length + 1),
+                            cx: 0,
+                            cy: 0,
+                            status: "available",
+                          });
+                        }
+                      } else if (diff < 0) {
+                        currentSeats.splice(count);
+                      }
+                      tableEl.seats = currentSeats;
+                    }
+
                     tableEl.seats = calculateTableSeatPositions(tableEl);
                   }
 
@@ -172,9 +198,9 @@ export const useSeatMapStore = create<EditorState>()(
 
       toggleSelection: (id: string) => {
         set((state) => ({
-          selectedIds: state.selectedIds.includes(id)
+          selectedIds: (state.selectedIds || []).includes(id)
             ? state.selectedIds.filter((sid) => sid !== id)
-            : [...state.selectedIds, id],
+            : [...(state.selectedIds || []), id],
         }));
       },
 

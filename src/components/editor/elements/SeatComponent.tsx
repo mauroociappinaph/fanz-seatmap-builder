@@ -43,7 +43,8 @@ export const SeatComponent: React.FC<SeatComponentProps> = ({
           fill={isSelected ? "white" : "#64748b"}
           className="pointer-events-none select-none"
         >
-          {seat.label}
+          {/* React automatically sanitizes strings, but we ensure it's treated as plain text */}
+          {String(seat.label)}
         </text>
       )}
     </g>
