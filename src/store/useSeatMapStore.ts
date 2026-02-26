@@ -421,14 +421,17 @@ export const useSeatMapStore = create<EditorState>()(
                 if ("position" in el) {
                   return {
                     ...el,
-                    position: { x: el.position.x + dx, y: el.position.y + dy },
+                    position: {
+                      x: Math.round((el.position.x + dx) * 100) / 100,
+                      y: Math.round((el.position.y + dy) * 100) / 100,
+                    },
                   } as MapElement;
                 } else if (el.type === "area") {
                   return {
                     ...el,
                     points: el.points.map((p) => ({
-                      x: p.x + dx,
-                      y: p.y + dy,
+                      x: Math.round((p.x + dx) * 100) / 100,
+                      y: Math.round((p.y + dy) * 100) / 100,
                     })),
                   } as MapElement;
                 }
@@ -444,7 +447,11 @@ export const useSeatMapStore = create<EditorState>()(
                     ...el,
                     seats: el.seats.map((s) =>
                       idsToMove.includes(s.id)
-                        ? ({ ...s, cx: s.cx + dx, cy: s.cy + dy } as Seat)
+                        ? ({
+                            ...s,
+                            cx: Math.round((s.cx + dx) * 100) / 100,
+                            cy: Math.round((s.cy + dy) * 100) / 100,
+                          } as Seat)
                         : s,
                     ),
                   } as MapElement;
