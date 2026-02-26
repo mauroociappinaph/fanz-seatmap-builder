@@ -15,9 +15,11 @@ import { parsePattern } from "@/services/labeling";
 import { calculateTableSeatPositions } from "@/services/layout/tableLayout";
 import { validateSeatMap } from "@/services/persistence/jsonMapper";
 
+import { strings } from "@/lib/i18n/strings";
+
 const initialSeatMap: SeatMap = {
   id: "initial-map",
-  name: "Mapa Vacío",
+  name: strings.nav.newMap,
   elements: [],
   viewport: { zoom: 1, panX: 0, panY: 0 },
   createdAt: new Date().toISOString(),
@@ -480,7 +482,7 @@ export const useSeatMapStore = create<EditorState>()(
         const newRow: Row = {
           id: `row-${crypto.randomUUID()}`,
           type: "row",
-          label: "Nueva Fila",
+          label: strings.elements.newRow,
           position,
           rotation: 0,
           seatSpacing,
@@ -510,7 +512,7 @@ export const useSeatMapStore = create<EditorState>()(
         const initialTable: Table = {
           id: `table-${crypto.randomUUID()}`,
           type: "table",
-          label: "T",
+          label: strings.elements.newTable,
           position,
           rotation: 0,
           shape: "round",
@@ -544,7 +546,7 @@ export const useSeatMapStore = create<EditorState>()(
         const newArea: Area = {
           id: `area-${crypto.randomUUID()}`,
           type: "area",
-          label: "Nueva Área",
+          label: strings.elements.newArea,
           points: [
             { x: startPos.x, y: startPos.y },
             { x: startPos.x + 150, y: startPos.y },

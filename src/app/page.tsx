@@ -6,6 +6,7 @@ import { Toolbar, Inspector } from "@/components/ui";
 import { useSeatMapStore } from "@/store";
 import { Toaster, toast } from "sonner";
 import { useRef } from "react";
+import { strings } from "@/lib/i18n/strings";
 
 export default function Home() {
   const { selectedIds, removeElements, exportJSON, importJSON, newMap } =
@@ -18,16 +19,22 @@ export default function Home() {
     // Capture current selection to avoid race conditions if selection changes while toast is visible
     const idsToDelete = [...selectedIds];
 
-    toast.warning(`¿Eliminar ${idsToDelete.length} elementos?`, {
-      description: "Esta acción no se puede deshacer.",
-      action: {
-        label: "Eliminar",
-        onClick: () => {
-          removeElements(idsToDelete);
-          toast.success("Elementos eliminados");
+    toast.warning(
+      strings.messages.deleteConfirm.replace(
+        "{count}",
+        idsToDelete.length.toString(),
+      ),
+      {
+        description: strings.messages.deleteDesc,
+        action: {
+          label: strings.common.delete,
+          onClick: () => {
+            removeElements(idsToDelete);
+            toast.success(strings.messages.deleteSuccess);
+          },
         },
       },
-    });
+    );
   };
 
   const handleExport = () => {
@@ -41,7 +48,7 @@ export default function Home() {
     a.download = `seatmap-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("Mapa exportado y descargado");
+    toast.success(strings.messages.exportSuccess);
   };
 
   const handleImportClick = () => {
@@ -57,10 +64,10 @@ export default function Home() {
       try {
         const json = event.target?.result as string;
         importJSON(json);
-        toast.success("Mapa importado correctamente");
+        toast.success(strings.messages.importSuccess);
       } catch (error) {
         console.error(error);
-        toast.error("Error al importar el mapa: JSON inválido");
+        toast.error(strings.messages.importError);
       }
     };
     reader.readAsText(file);
@@ -69,9 +76,9 @@ export default function Home() {
   };
 
   const handleNewMap = () => {
-    if (confirm("¿Estás seguro? Se perderán los cambios no guardados.")) {
+    if (confirm(strings.messages.newMapConfirm)) {
       newMap();
-      toast.success("Nuevo mapa creado");
+      toast.success(strings.messages.newMapSuccess);
     }
   };
 
@@ -89,46 +96,51 @@ export default function Home() {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 bg-blue-600 rounded flex items-center justify-center">
-              <span className="text-white font-bold text-xs italic">F</span>
+              <span className="text-white font-bold text-xs italic">
+                {strings.nav.title[0]}
+              </span>
             </div>
             <h1 className="text-lg font-semibold tracking-tight text-slate-800">
-              Fanz <span className="text-blue-600 font-semibold">SeatMap</span>
+              Fanz{" "}
+              <span className="text-blue-600 font-semibold">
+                {strings.nav.title}
+              </span>
             </h1>
           </div>
           <div className="h-4 w-px bg-slate-300 mx-2" />
           <span className="text-xs font-medium text-slate-400 uppercase tracking-widest">
-            Editor
+            {strings.nav.editor}
           </span>
         </div>
 
         <div className="flex items-center gap-3">
           <button
             onClick={handleNewMap}
-            aria-label="Create a new empty seat map"
+            aria-label={strings.nav.newMap}
             className="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-all duration-200 active:scale-95"
           >
-            New Map
+            {strings.nav.newMap}
           </button>
           <div className="flex items-center gap-2">
             <button
               onClick={handleImportClick}
-              aria-label="Import seat map from JSON file"
+              aria-label={strings.nav.import}
               className="px-4 py-1.5 bg-white border border-slate-200 hover:border-blue-300 hover:text-blue-600 text-slate-700 text-xs font-semibold rounded shadow-sm hover:shadow transition-all duration-200 active:scale-95"
             >
-              Import JSON
+              {strings.nav.import}
             </button>
             <button
               onClick={handleExport}
-              aria-label="Export seat map to JSON file"
+              aria-label={strings.nav.export}
               className="px-4 py-1.5 bg-white border border-slate-200 hover:border-blue-300 hover:text-blue-600 text-slate-700 text-xs font-semibold rounded shadow-sm hover:shadow transition-all duration-200 active:scale-95"
             >
-              Export JSON
+              {strings.nav.export}
             </button>
             <button
-              aria-label="Publish current seat map"
+              aria-label={strings.nav.publish}
               className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-semibold rounded shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
             >
-              Publish
+              {strings.nav.publish}
             </button>
           </div>
         </div>
@@ -147,10 +159,10 @@ export default function Home() {
             <button
               onClick={handleDelete}
               disabled={selectedIds.length === 0}
-              aria-label={`Delete ${selectedIds.length} selected elements`}
+              aria-label={strings.common.delete}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-lg hover:bg-red-100 hover:border-red-200 hover:shadow-sm disabled:opacity-40 disabled:grayscale disabled:pointer-events-none transition-all duration-200 active:scale-95 text-xs font-bold uppercase tracking-wider"
             >
-              Delete Selected
+              {strings.common.delete} Selected
             </button>
           </div>
 
@@ -158,7 +170,7 @@ export default function Home() {
             <div className="flex items-center gap-2 mb-2">
               <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
               <span className="text-[10px] uppercase font-bold text-slate-500">
-                Editor Help
+                {strings.nav.editor} Help
               </span>
             </div>
             <p className="text-[10px] leading-relaxed text-slate-400 font-medium">

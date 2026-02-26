@@ -3,6 +3,7 @@ import React from "react";
 import { Area } from "@/domain/types";
 import { useSeatMapStore } from "@/store";
 import { useViewport } from "@/hooks/useViewport";
+import { strings } from "@/lib/i18n/strings";
 
 interface AreaComponentProps {
   area: Area;
@@ -61,7 +62,7 @@ export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
       focusable="true"
       className="group cursor-move outline-none"
       role="region"
-      aria-label={`Area ${area.label}`}
+      aria-label={`${strings.elements.areaLabel} ${area.label}`}
     >
       <polygon
         points={pointsString}

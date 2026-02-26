@@ -4,6 +4,7 @@ import { Row } from "@/domain/types";
 import { SeatComponent } from "./SeatComponent";
 import { useSeatMapStore } from "@/store";
 import { useViewport } from "@/hooks/useViewport";
+import { strings } from "@/lib/i18n/strings";
 
 interface RowComponentProps {
   row: Row;
@@ -50,7 +51,7 @@ export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
       focusable="true"
       className="group cursor-move outline-none"
       role="group"
-      aria-label={`Row ${row.label}, ${row.seats.length} seats`}
+      aria-label={`${strings.elements.rowLabel} ${row.label}, ${row.seats.length} seats`}
     >
       {/* Visual bounding box for selection if needed */}
       {isSelected && (
@@ -87,7 +88,7 @@ export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
         fill="#94a3b8"
         className="select-none pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"
       >
-        Row {row.label}
+        {strings.elements.rowLabel} {row.label}
       </text>
     </g>
   );

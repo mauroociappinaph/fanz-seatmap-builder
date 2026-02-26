@@ -4,6 +4,7 @@ import { Table } from "@/domain/types";
 import { SeatComponent } from "./SeatComponent";
 import { useSeatMapStore } from "@/store";
 import { useViewport } from "@/hooks/useViewport";
+import { strings } from "@/lib/i18n/strings";
 
 interface TableComponentProps {
   table: Table;
@@ -50,7 +51,7 @@ export const TableComponent: React.FC<TableComponentProps> = ({ table }) => {
       focusable="true"
       className="group cursor-move outline-none"
       role="group"
-      aria-label={`Table ${table.label}, ${table.shape} shape, ${table.seats.length} seats`}
+      aria-label={`${strings.elements.tableLabel} ${table.label}, ${table.shape} shape, ${table.seats.length} seats`}
     >
       {/* Table Surface */}
       {table.shape === "round" ? (

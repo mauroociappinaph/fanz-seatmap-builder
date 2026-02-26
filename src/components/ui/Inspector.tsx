@@ -6,6 +6,8 @@ import { useSeatMapStore } from "@/store";
 import { MapElement, Row, Table, Area, Position, Seat } from "@/domain/types";
 import { Type, Move, RotateCw, Settings2, Trash2, Hash } from "lucide-react";
 
+import { strings } from "@/lib/i18n/strings";
+
 export const Inspector: React.FC = () => {
   const { seatMap, selectedIds, updateElement, moveElement, removeElements } =
     useSeatMapStore();
@@ -60,10 +62,10 @@ export const Inspector: React.FC = () => {
         </div>
         <div>
           <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-            No selection
+            {strings.inspector.noSelection}
           </p>
           <p className="text-[10px] text-slate-400 mt-1 max-w-[150px]">
-            Select an element to view and edit its properties
+            {strings.inspector.noSelectionDesc}
           </p>
         </div>
       </div>
@@ -83,6 +85,22 @@ export const Inspector: React.FC = () => {
     moveElement(selectedElement.id, newPos);
   };
 
+  // Get localized type name
+  const getLocalizedType = (type: string) => {
+    switch (type) {
+      case "row":
+        return strings.elements.rowLabel;
+      case "table":
+        return strings.elements.tableLabel;
+      case "area":
+        return strings.elements.areaLabel;
+      case "seat":
+        return strings.elements.seatLabel;
+      default:
+        return type;
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Header */}
@@ -92,16 +110,16 @@ export const Inspector: React.FC = () => {
             <Hash className="w-3.5 h-3.5 text-blue-600" />
           </div>
           <span className="text-xs font-bold text-slate-700 uppercase tracking-tight">
-            {selectedElement.type}{" "}
+            {getLocalizedType(selectedElement.type)}{" "}
             {selectedElement.type === "seat"
-              ? `(Label: ${selectedElement.label})`
+              ? `(${strings.inspector.label}: ${selectedElement.label})`
               : ""}
           </span>
         </div>
         <button
           onClick={() => removeElements([selectedElement.id])}
           className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
-          title="Delete element"
+          title={strings.common.delete}
         >
           <Trash2 className="w-3.5 h-3.5" />
         </button>
@@ -111,14 +129,11 @@ export const Inspector: React.FC = () => {
         {/* Section: Bulk Labeling (Visible when 1+ elements selected) */}
         <div className="space-y-4 pb-4 border-b border-slate-100">
           <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-            <Hash className="w-3 h-3" /> Bulk Labeling
+            <Hash className="w-3 h-3" /> {strings.inspector.bulkLabeling}
           </label>
           <div className="flex flex-col gap-2">
             <p className="text-[9px] text-slate-400 font-medium leading-tight">
-              Use patterns like{" "}
-              <code className="text-blue-500">{"A{1..10}"}</code> or{" "}
-              <code className="text-blue-500">{"{A..Z}1"}</code> to label
-              selected elements.
+              {strings.inspector.bulkLabelingDesc}
             </p>
             <div className="flex gap-2">
               <input
@@ -147,7 +162,7 @@ export const Inspector: React.FC = () => {
                 }}
                 className="px-3 py-2 bg-blue-600 text-white text-[10px] font-bold uppercase rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
               >
-                Apply
+                {strings.inspector.apply}
               </button>
             </div>
           </div>
@@ -156,12 +171,12 @@ export const Inspector: React.FC = () => {
         {/* Section: General */}
         <div className="space-y-4">
           <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-            <Type className="w-3 h-3" /> General
+            <Type className="w-3 h-3" /> {strings.inspector.general}
           </label>
           <div className="grid gap-2">
             <div className="flex flex-col gap-1.5">
               <span className="text-[10px] font-semibold text-slate-500 ml-1">
-                Label
+                {strings.inspector.label}
               </span>
               <input
                 type="text"
@@ -178,12 +193,12 @@ export const Inspector: React.FC = () => {
         {"position" in selectedElement && (
           <div className="space-y-4 pt-4 border-t border-slate-100">
             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-              <Move className="w-3 h-3" /> Layout
+              <Move className="w-3 h-3" /> {strings.inspector.layout}
             </label>
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-1.5">
                 <span className="text-[10px] font-semibold text-slate-500 ml-1">
-                  Pos X
+                  {strings.inspector.position} X
                 </span>
                 <input
                   type="number"
@@ -194,7 +209,7 @@ export const Inspector: React.FC = () => {
               </div>
               <div className="flex flex-col gap-1.5">
                 <span className="text-[10px] font-semibold text-slate-500 ml-1">
-                  Pos Y
+                  {strings.inspector.position} Y
                 </span>
                 <input
                   type="number"
@@ -208,7 +223,7 @@ export const Inspector: React.FC = () => {
             {"rotation" in selectedElement && (
               <div className="flex flex-col gap-1.5">
                 <span className="text-[10px] font-semibold text-slate-500 ml-1 flex items-center gap-2">
-                  <RotateCw className="w-3 h-3" /> Rotation
+                  <RotateCw className="w-3 h-3" /> {strings.inspector.rotation}
                 </span>
                 <input
                   type="range"
@@ -235,14 +250,15 @@ export const Inspector: React.FC = () => {
         {/* Section: Type Specific */}
         <div className="space-y-4 pt-4 border-t border-slate-100">
           <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-            <Settings2 className="w-3 h-3" /> Specifics
+            <Settings2 className="w-3 h-3" />{" "}
+            {getLocalizedType(selectedElement.type)}
           </label>
 
           {selectedElement.type === "row" && (
             <>
               <div className="flex flex-col gap-1.5">
                 <span className="text-[10px] font-semibold text-slate-500 ml-1">
-                  Seat Count
+                  {strings.inspector.capacity}
                 </span>
                 <input
                   type="number"
@@ -261,7 +277,7 @@ export const Inspector: React.FC = () => {
               </div>
               <div className="flex flex-col gap-1.5">
                 <span className="text-[10px] font-semibold text-slate-500 ml-1">
-                  Seat Spacing
+                  {strings.inspector.spacing}
                 </span>
                 <input
                   type="number"
@@ -279,7 +295,7 @@ export const Inspector: React.FC = () => {
             <div className="space-y-3">
               <div className="flex flex-col gap-1.5">
                 <span className="text-[10px] font-semibold text-slate-500 ml-1">
-                  Capacity (Seats)
+                  {strings.inspector.capacity}
                 </span>
                 <input
                   type="number"
@@ -295,7 +311,7 @@ export const Inspector: React.FC = () => {
               </div>
               <div className="flex flex-col gap-1.5">
                 <span className="text-[10px] font-semibold text-slate-500 ml-1">
-                  Shape
+                  {strings.inspector.shape}
                 </span>
                 <select
                   value={(selectedElement as Table).shape}
@@ -306,16 +322,20 @@ export const Inspector: React.FC = () => {
                   }
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
                 >
-                  <option value="round">Round</option>
-                  <option value="rectangular">Rectangular</option>
+                  <option value="round">
+                    {strings.inspector.shapeOptions.round}
+                  </option>
+                  <option value="rectangular">
+                    {strings.inspector.shapeOptions.rectangular}
+                  </option>
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1.5">
                   <span className="text-[10px] font-semibold text-slate-500 ml-1">
                     {(selectedElement as Table).shape === "round"
-                      ? "Diameter"
-                      : "Width"}
+                      ? strings.inspector.diameter
+                      : strings.inspector.width}
                   </span>
                   <input
                     type="number"
@@ -329,7 +349,7 @@ export const Inspector: React.FC = () => {
                 {(selectedElement as Table).shape === "rectangular" && (
                   <div className="flex flex-col gap-1.5">
                     <span className="text-[10px] font-semibold text-slate-500 ml-1">
-                      Height
+                      {strings.inspector.height}
                     </span>
                     <input
                       type="number"
@@ -348,7 +368,7 @@ export const Inspector: React.FC = () => {
           {selectedElement.type === "area" && (
             <div className="flex flex-col gap-1.5">
               <span className="text-[10px] font-semibold text-slate-500 ml-1">
-                Fill Color
+                {strings.inspector.fillColor}
               </span>
               <div className="flex gap-2 items-center">
                 <input
@@ -370,7 +390,7 @@ export const Inspector: React.FC = () => {
           {selectedElement.type === "seat" && (
             <div className="flex flex-col gap-1.5">
               <span className="text-[10px] font-semibold text-slate-500 ml-1">
-                Status
+                {strings.inspector.status}
               </span>
               <select
                 value={selectedElement.status}
@@ -381,10 +401,18 @@ export const Inspector: React.FC = () => {
                 }
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
               >
-                <option value="available">Available</option>
-                <option value="selected">Selected</option>
-                <option value="blocked">Blocked</option>
-                <option value="occupied">Occupied</option>
+                <option value="available">
+                  {strings.inspector.statusOptions.available}
+                </option>
+                <option value="selected">
+                  {strings.inspector.statusOptions.selected}
+                </option>
+                <option value="blocked">
+                  {strings.inspector.statusOptions.blocked}
+                </option>
+                <option value="occupied">
+                  {strings.inspector.statusOptions.occupied}
+                </option>
               </select>
             </div>
           )}
@@ -395,7 +423,9 @@ export const Inspector: React.FC = () => {
       <div className="p-3 bg-slate-50/50 border-t border-slate-100">
         <div className="flex items-center justify-between text-[9px] text-slate-400 font-bold uppercase tracking-widest px-1">
           <span>ID: {selectedElement.id.split("-")[0]}...</span>
-          <span className="text-blue-500">Live Sync Active</span>
+          <span className="text-blue-500">
+            {strings.common.success} Sync Active
+          </span>
         </div>
       </div>
     </div>

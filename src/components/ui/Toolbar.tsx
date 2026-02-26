@@ -5,6 +5,7 @@ import React from "react";
 import { useSeatMapStore } from "@/store";
 import { LayoutGrid, Circle, Square, MousePointer2 } from "lucide-react";
 import { clsx } from "clsx";
+import { strings } from "@/lib/i18n/strings";
 
 export const Toolbar: React.FC = () => {
   const { activeTool, setActiveTool, creationConfig, updateCreationConfig } =
@@ -13,19 +14,19 @@ export const Toolbar: React.FC = () => {
   return (
     <div className="flex flex-col gap-4">
       <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-        Add Elements
+        {strings.toolbar.addElements}
       </h3>
       <div className="grid grid-cols-2 gap-2">
         <button
           onClick={() => setActiveTool("addRow")}
-          aria-label="Select tool to add a new row of seats"
+          aria-label={`${strings.toolbar.select} ${strings.toolbar.row}`}
           className={clsx(
             "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200 gap-2 group active:scale-95",
             activeTool === "addRow"
               ? "border-blue-500 bg-blue-50 shadow-sm ring-1 ring-blue-500/20"
               : "border-slate-200 hover:border-blue-400 hover:bg-slate-50 hover:shadow-md",
           )}
-          title="Add a new row of seats"
+          title={`${strings.toolbar.addElements} ${strings.toolbar.row}`}
         >
           <div
             className={clsx(
@@ -52,20 +53,20 @@ export const Toolbar: React.FC = () => {
                 : "text-slate-600 group-hover:text-slate-900",
             )}
           >
-            Row
+            {strings.toolbar.row}
           </span>
         </button>
 
         <button
           onClick={() => setActiveTool("addTable")}
-          aria-label="Select tool to add a new table"
+          aria-label={`${strings.toolbar.select} ${strings.toolbar.table}`}
           className={clsx(
             "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200 gap-2 group active:scale-95",
             activeTool === "addTable"
               ? "border-blue-500 bg-blue-50 shadow-sm ring-1 ring-blue-500/20"
               : "border-slate-200 hover:border-blue-400 hover:bg-slate-50 hover:shadow-md",
           )}
-          title="Add a new table"
+          title={`${strings.toolbar.addElements} ${strings.toolbar.table}`}
         >
           <div
             className={clsx(
@@ -92,20 +93,20 @@ export const Toolbar: React.FC = () => {
                 : "text-slate-600 group-hover:text-slate-900",
             )}
           >
-            Table
+            {strings.toolbar.table}
           </span>
         </button>
 
         <button
           onClick={() => setActiveTool("addArea")}
-          aria-label="Select tool to add a new area"
+          aria-label={`${strings.toolbar.select} ${strings.toolbar.area}`}
           className={clsx(
             "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200 gap-2 group active:scale-95",
             activeTool === "addArea"
               ? "border-blue-500 bg-blue-50 shadow-sm ring-1 ring-blue-500/20"
               : "border-slate-200 hover:border-blue-400 hover:bg-slate-50 hover:shadow-md",
           )}
-          title="Add a new area"
+          title={`${strings.toolbar.addElements} ${strings.toolbar.area}`}
         >
           <div
             className={clsx(
@@ -132,20 +133,20 @@ export const Toolbar: React.FC = () => {
                 : "text-slate-600 group-hover:text-slate-900",
             )}
           >
-            Area
+            {strings.toolbar.area}
           </span>
         </button>
 
         <button
           onClick={() => setActiveTool("select")}
-          aria-label="Select tool to select and move elements"
+          aria-label={strings.toolbar.select}
           className={clsx(
             "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200 gap-2 group active:scale-95",
             activeTool === "select"
               ? "border-blue-500 bg-blue-50 shadow-sm ring-1 ring-blue-500/20"
               : "border-slate-200 hover:border-blue-400 hover:bg-slate-50 hover:shadow-md",
           )}
-          title="Selection tool"
+          title={strings.toolbar.select}
         >
           <div
             className={clsx(
@@ -172,7 +173,7 @@ export const Toolbar: React.FC = () => {
                 : "text-slate-600 group-hover:text-slate-900",
             )}
           >
-            Select
+            {strings.toolbar.select}
           </span>
         </button>
       </div>
@@ -183,13 +184,15 @@ export const Toolbar: React.FC = () => {
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
             <span className="text-[10px] uppercase font-bold text-blue-600 tracking-tight">
-              {activeTool === "addRow" ? "Row Settings" : "Table Settings"}
+              {activeTool === "addRow"
+                ? strings.toolbar.settings.row
+                : strings.toolbar.settings.table}
             </span>
           </div>
 
           <div className="flex flex-col gap-1.5">
             <span className="text-[9px] font-semibold text-slate-500 ml-1">
-              Initial Seats
+              {strings.toolbar.settings.initialSeats}
             </span>
             <div className="flex gap-2">
               <input
@@ -213,7 +216,7 @@ export const Toolbar: React.FC = () => {
               />
             </div>
             <p className="text-[8px] text-blue-400 italic px-1">
-              Click on canvas to place with this count.
+              {strings.toolbar.settings.help}
             </p>
           </div>
         </div>
