@@ -15,12 +15,15 @@ export default function Home() {
   const handleDelete = () => {
     if (selectedIds.length === 0) return;
 
-    toast.warning(`¿Eliminar ${selectedIds.length} elementos?`, {
+    // Capture current selection to avoid race conditions if selection changes while toast is visible
+    const idsToDelete = [...selectedIds];
+
+    toast.warning(`¿Eliminar ${idsToDelete.length} elementos?`, {
       description: "Esta acción no se puede deshacer.",
       action: {
         label: "Eliminar",
         onClick: () => {
-          removeElements(selectedIds);
+          removeElements(idsToDelete);
           toast.success("Elementos eliminados");
         },
       },
