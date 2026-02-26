@@ -116,6 +116,7 @@ describe("useSeatMapStore", () => {
       rotation: 0,
       seats: [],
       seatSpacing: 0,
+      seatCount: 0,
     };
     const row2: Row = {
       id: "row-2",
@@ -125,6 +126,7 @@ describe("useSeatMapStore", () => {
       rotation: 0,
       seats: [],
       seatSpacing: 0,
+      seatCount: 0,
     };
 
     useSeatMapStore.getState().addElement(row1);
