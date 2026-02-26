@@ -38,5 +38,10 @@ describe("tableLayout Service", () => {
     expect(positionedSeats).toHaveLength(4);
     const allAtZero = positionedSeats.every((s) => s.cx === 0 && s.cy === 0);
     expect(allAtZero).toBe(false);
+
+    // With 4 seats and w=100, h=60 (+margin 15*2 = 130, 90)
+    // Seat 0: distance 0 -> top-left corner (-65, -45)
+    expect(positionedSeats[0].cx).toBeCloseTo(-65);
+    expect(positionedSeats[0].cy).toBeCloseTo(-45);
   });
 });

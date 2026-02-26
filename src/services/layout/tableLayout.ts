@@ -23,21 +23,43 @@ export const calculateTableSeatPositions = (table: Table): Seat[] => {
       };
     });
   } else {
-    // Rectangular table: distribute along sides
-    // Simplified: divide seats among 4 sides
+    // Rectangular table: distribute evenly along the perimeter
     const w = width + margin * 2;
     const h = height + margin * 2;
+    const perimeter = 2 * (w + h);
 
     return seats.map((seat, i) => {
-      // Basic distribution for MVP:
-      // This could be much more complex (calculating actual perimeter)
-      // but for now we'll place them in a circular pattern around the rectangle
-      // which looks professional enough for most rectangular tables.
-      const angle = (i * 2 * Math.PI) / count;
+      // Find position along the perimeter (0 to perimeter)
+      const distance = (i / count) * perimeter;
+
+      let cx = 0;
+      let cy = 0;
+
+      // Top edge (left to right)
+      if (distance < w) {
+        cx = -w / 2 + distance;
+        cy = -h / 2;
+      }
+      // Right edge (top to bottom)
+      else if (distance < w + h) {
+        cx = w / 2;
+        cy = -h / 2 + (distance - w);
+      }
+      // Bottom edge (right to left)
+      else if (distance < 2 * w + h) {
+        cx = w / 2 - (distance - (w + h));
+        cy = h / 2;
+      }
+      // Left edge (bottom to top)
+      else {
+        cx = -w / 2;
+        cy = h / 2 - (distance - (2 * w + h));
+      }
+
       return {
         ...seat,
-        cx: Math.cos(angle) * (w / 2),
-        cy: Math.sin(angle) * (h / 2),
+        cx,
+        cy,
       };
     });
   }
