@@ -17,7 +17,7 @@ export const TableComponent: React.FC<TableComponentProps> = ({ table }) => {
 
   const onMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const svg = e.currentTarget.ownerSVGElement;
+    const svg = (e.currentTarget as SVGElement).ownerSVGElement;
     if (svg) {
       const pos = screenToSVG(e.clientX, e.clientY, svg);
       startDragging(table.id, pos);

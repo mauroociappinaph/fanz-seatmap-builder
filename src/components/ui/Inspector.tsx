@@ -3,17 +3,30 @@
 
 import React from "react";
 import { useSeatMapStore } from "@/store";
-import { MapElement, Row, Table, Area, Position } from "@/domain/types";
+import { MapElement, Row, Table, Area, Position, Seat } from "@/domain/types";
 import { Type, Move, RotateCw, Settings2, Trash2, Hash } from "lucide-react";
 
 export const Inspector: React.FC = () => {
   const { seatMap, selectedIds, updateElement, moveElement, removeElements } =
     useSeatMapStore();
 
-  // Get the first selected element
-  const selectedElement = seatMap.elements.find(
-    (el) => el.id === selectedIds[0],
-  );
+  // Helper to find element or seat by ID
+  const findElementById = (id: string): MapElement | Seat | null => {
+    // Check root elements
+    const rootEl = seatMap.elements.find((el) => el.id === id);
+    if (rootEl) return rootEl;
+
+    // Check nested seats in rows and tables
+    for (const el of seatMap.elements) {
+      if (el.type === "row" || el.type === "table") {
+        const seat = el.seats.find((s) => s.id === id);
+        if (seat) return seat;
+      }
+    }
+    return null;
+  };
+
+  const selectedElement = findElementById(selectedIds[0]);
 
   if (!selectedElement) {
     return (
@@ -33,8 +46,8 @@ export const Inspector: React.FC = () => {
     );
   }
 
-  const handleUpdate = (updates: Partial<MapElement>) => {
-    updateElement(selectedElement.id, updates);
+  const handleUpdate = (updates: Partial<MapElement | Seat>) => {
+    updateElement(selectedElement.id, updates as Partial<MapElement>);
   };
 
   const handleMove = (field: "x" | "y", value: number) => {
@@ -243,6 +256,28 @@ export const Inspector: React.FC = () => {
                   className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
                 />
               </div>
+            </div>
+          )}
+
+          {selectedElement.type === "seat" && (
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[10px] font-semibold text-slate-500 ml-1">
+                Status
+              </span>
+              <select
+                value={selectedElement.status}
+                onChange={(e) =>
+                  handleUpdate({
+                    status: e.target.value as Seat["status"],
+                  })
+                }
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
+              >
+                <option value="available">Available</option>
+                <option value="selected">Selected</option>
+                <option value="blocked">Blocked</option>
+                <option value="occupied">Occupied</option>
+              </select>
             </div>
           )}
         </div>

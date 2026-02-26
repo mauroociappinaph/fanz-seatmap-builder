@@ -54,22 +54,45 @@ export const useSeatMapStore = create<EditorState>()(
         set((state) => ({
           seatMap: {
             ...state.seatMap,
-            elements: state.seatMap.elements.filter(
-              (el) => !ids.includes(el.id),
-            ),
+            elements: state.seatMap.elements
+              .filter((el) => !ids.includes(el.id))
+              .map((el) => {
+                if (el.type === "row" || el.type === "table") {
+                  return {
+                    ...el,
+                    seats: el.seats.filter((s) => !ids.includes(s.id)),
+                  };
+                }
+                return el;
+              }),
             updatedAt: new Date().toISOString(),
           },
           selectedIds: state.selectedIds.filter((id) => !ids.includes(id)),
         }));
       },
 
-      updateElement: (id: string, updates: Partial<MapElement>) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      updateElement: (id: string, updates: Partial<any>) => {
         set((state) => ({
           seatMap: {
             ...state.seatMap,
-            elements: state.seatMap.elements.map((el) =>
-              el.id === id ? ({ ...el, ...updates } as MapElement) : el,
-            ),
+            elements: state.seatMap.elements.map((el) => {
+              if (el.id === id) {
+                return { ...el, ...updates };
+              }
+              if (el.type === "row" || el.type === "table") {
+                const hasSeat = el.seats.some((s) => s.id === id);
+                if (hasSeat) {
+                  return {
+                    ...el,
+                    seats: el.seats.map((s) =>
+                      s.id === id ? { ...s, ...updates } : s,
+                    ),
+                  };
+                }
+              }
+              return el;
+            }),
             updatedAt: new Date().toISOString(),
           },
         }));

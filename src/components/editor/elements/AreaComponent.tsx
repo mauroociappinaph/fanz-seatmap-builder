@@ -19,7 +19,7 @@ export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
 
   const onMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const svg = e.currentTarget.ownerSVGElement;
+    const svg = (e.currentTarget as SVGElement).ownerSVGElement;
     if (svg) {
       const pos = screenToSVG(e.clientX, e.clientY, svg);
       startDragging(area.id, pos);

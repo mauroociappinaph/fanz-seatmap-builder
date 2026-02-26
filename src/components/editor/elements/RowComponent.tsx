@@ -17,7 +17,7 @@ export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
 
   const onMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation(); // Evita que el click llegue al fondo del SVG
-    const svg = e.currentTarget.ownerSVGElement;
+    const svg = (e.currentTarget as SVGElement).ownerSVGElement;
     if (svg) {
       const pos = screenToSVG(e.clientX, e.clientY, svg);
       startDragging(row.id, pos);
