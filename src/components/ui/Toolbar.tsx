@@ -18,16 +18,16 @@ export const Toolbar: React.FC = () => {
         <button
           onClick={() => setActiveTool("addRow")}
           className={clsx(
-            "flex flex-col items-center justify-center p-3 border rounded-lg transition-all gap-2 group",
+            "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200 gap-2 group active:scale-95",
             activeTool === "addRow"
-              ? "border-blue-500 bg-blue-50"
-              : "border-slate-200 hover:border-blue-500 hover:bg-blue-50",
+              ? "border-blue-500 bg-blue-50 shadow-sm ring-1 ring-blue-500/20"
+              : "border-slate-200 hover:border-blue-400 hover:bg-slate-50 hover:shadow-md",
           )}
           title="Add a new row of seats"
         >
           <div
             className={clsx(
-              "p-2 rounded transition-colors",
+              "p-2 rounded-md transition-colors duration-200",
               activeTool === "addRow"
                 ? "bg-blue-100"
                 : "bg-slate-100 group-hover:bg-blue-100",
@@ -35,29 +35,38 @@ export const Toolbar: React.FC = () => {
           >
             <LayoutGrid
               className={clsx(
-                "w-4 h-4 transition-colors",
+                "w-4 h-4 transition-colors duration-200",
                 activeTool === "addRow"
-                  ? "text-blue-500"
-                  : "text-slate-400 group-hover:text-blue-500",
+                  ? "text-blue-600"
+                  : "text-slate-400 group-hover:text-blue-600",
               )}
             />
           </div>
-          <span className="text-[10px] font-semibold text-slate-600">Row</span>
+          <span
+            className={clsx(
+              "text-[10px] font-semibold transition-colors duration-200",
+              activeTool === "addRow"
+                ? "text-blue-700"
+                : "text-slate-600 group-hover:text-slate-900",
+            )}
+          >
+            Row
+          </span>
         </button>
 
         <button
           onClick={() => setActiveTool("addTable")}
           className={clsx(
-            "flex flex-col items-center justify-center p-3 border rounded-lg transition-all gap-2 group",
+            "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200 gap-2 group active:scale-95",
             activeTool === "addTable"
-              ? "border-blue-500 bg-blue-50"
-              : "border-slate-200 hover:border-blue-500 hover:bg-blue-50",
+              ? "border-blue-500 bg-blue-50 shadow-sm ring-1 ring-blue-500/20"
+              : "border-slate-200 hover:border-blue-400 hover:bg-slate-50 hover:shadow-md",
           )}
           title="Add a new table"
         >
           <div
             className={clsx(
-              "p-2 rounded transition-colors",
+              "p-2 rounded-md transition-colors duration-200",
               activeTool === "addTable"
                 ? "bg-blue-100"
                 : "bg-slate-100 group-hover:bg-blue-100",
@@ -65,14 +74,21 @@ export const Toolbar: React.FC = () => {
           >
             <Circle
               className={clsx(
-                "w-4 h-4 transition-colors",
+                "w-4 h-4 transition-colors duration-200",
                 activeTool === "addTable"
-                  ? "text-blue-500"
-                  : "text-slate-400 group-hover:text-blue-500",
+                  ? "text-blue-600"
+                  : "text-slate-400 group-hover:text-blue-600",
               )}
             />
           </div>
-          <span className="text-[10px] font-semibold text-slate-600">
+          <span
+            className={clsx(
+              "text-[10px] font-semibold transition-colors duration-200",
+              activeTool === "addTable"
+                ? "text-blue-700"
+                : "text-slate-600 group-hover:text-slate-900",
+            )}
+          >
             Table
           </span>
         </button>
@@ -80,16 +96,16 @@ export const Toolbar: React.FC = () => {
         <button
           onClick={() => setActiveTool("addArea")}
           className={clsx(
-            "flex flex-col items-center justify-center p-3 border rounded-lg transition-all gap-2 group",
+            "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200 gap-2 group active:scale-95",
             activeTool === "addArea"
-              ? "border-blue-500 bg-blue-50"
-              : "border-slate-200 hover:border-blue-500 hover:bg-blue-50",
+              ? "border-blue-500 bg-blue-50 shadow-sm ring-1 ring-blue-500/20"
+              : "border-slate-200 hover:border-blue-400 hover:bg-slate-50 hover:shadow-md",
           )}
           title="Add a new area"
         >
           <div
             className={clsx(
-              "p-2 rounded transition-colors",
+              "p-2 rounded-md transition-colors duration-200",
               activeTool === "addArea"
                 ? "bg-blue-100"
                 : "bg-slate-100 group-hover:bg-blue-100",
@@ -97,29 +113,38 @@ export const Toolbar: React.FC = () => {
           >
             <Square
               className={clsx(
-                "w-4 h-4 transition-colors",
+                "w-4 h-4 transition-colors duration-200",
                 activeTool === "addArea"
-                  ? "text-blue-500"
-                  : "text-slate-400 group-hover:text-blue-500",
+                  ? "text-blue-600"
+                  : "text-slate-400 group-hover:text-blue-600",
               )}
             />
           </div>
-          <span className="text-[10px] font-semibold text-slate-600">Area</span>
+          <span
+            className={clsx(
+              "text-[10px] font-semibold transition-colors duration-200",
+              activeTool === "addArea"
+                ? "text-blue-700"
+                : "text-slate-600 group-hover:text-slate-900",
+            )}
+          >
+            Area
+          </span>
         </button>
 
         <button
           onClick={() => setActiveTool("select")}
           className={clsx(
-            "flex flex-col items-center justify-center p-3 border rounded-lg transition-all gap-2 group",
+            "flex flex-col items-center justify-center p-3 border rounded-lg transition-all duration-200 gap-2 group active:scale-95",
             activeTool === "select"
-              ? "border-blue-500 bg-blue-50"
-              : "border-slate-200 hover:border-blue-500 hover:bg-blue-50",
+              ? "border-blue-500 bg-blue-50 shadow-sm ring-1 ring-blue-500/20"
+              : "border-slate-200 hover:border-blue-400 hover:bg-slate-50 hover:shadow-md",
           )}
           title="Selection tool"
         >
           <div
             className={clsx(
-              "p-2 rounded transition-colors",
+              "p-2 rounded-md transition-colors duration-200",
               activeTool === "select"
                 ? "bg-blue-100"
                 : "bg-slate-100 group-hover:bg-blue-100",
@@ -127,14 +152,21 @@ export const Toolbar: React.FC = () => {
           >
             <MousePointer2
               className={clsx(
-                "w-4 h-4 transition-colors",
+                "w-4 h-4 transition-colors duration-200",
                 activeTool === "select"
-                  ? "text-blue-500"
-                  : "text-slate-400 group-hover:text-blue-500",
+                  ? "text-blue-600"
+                  : "text-slate-400 group-hover:text-blue-600",
               )}
             />
           </div>
-          <span className="text-[10px] font-semibold text-slate-600">
+          <span
+            className={clsx(
+              "text-[10px] font-semibold transition-colors duration-200",
+              activeTool === "select"
+                ? "text-blue-700"
+                : "text-slate-600 group-hover:text-slate-900",
+            )}
+          >
             Select
           </span>
         </button>
