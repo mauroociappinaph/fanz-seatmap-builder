@@ -28,8 +28,11 @@ export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
       const pos = screenToSVG(e.clientX, e.clientY, svg);
       const isMulti = e.ctrlKey || e.metaKey;
 
+      if (isMulti || !isSelected) {
+        selectElement(area.id, isMulti);
+      }
+
       startDragging(area.id, pos);
-      selectElement(area.id, isMulti);
       setActiveTool("select");
     }
   };

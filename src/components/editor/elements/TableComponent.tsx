@@ -27,8 +27,11 @@ export const TableComponent: React.FC<TableComponentProps> = ({ table }) => {
       const pos = screenToSVG(e.clientX, e.clientY, svg);
       const isMulti = e.ctrlKey || e.metaKey;
 
+      if (isMulti || !isSelected) {
+        selectElement(table.id, isMulti);
+      }
+
       startDragging(table.id, pos);
-      selectElement(table.id, isMulti);
       setActiveTool("select");
     }
   };

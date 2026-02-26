@@ -27,8 +27,11 @@ export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
       const pos = screenToSVG(e.clientX, e.clientY, svg);
       const isMulti = e.ctrlKey || e.metaKey;
 
+      if (isMulti || !isSelected) {
+        selectElement(row.id, isMulti);
+      }
+
       startDragging(row.id, pos);
-      selectElement(row.id, isMulti);
       setActiveTool("select");
     }
   };
