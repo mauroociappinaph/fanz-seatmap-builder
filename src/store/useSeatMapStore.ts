@@ -8,14 +8,12 @@ import {
   ViewportState,
   Row,
   Table,
-  Row,
-  Table,
   Seat,
   MAX_LABEL_LENGTHS,
 } from "@/domain/types";
 import { parsePattern } from "@/services/labeling";
 import { calculateTableSeatPositions } from "@/services/layout/tableLayout";
-import { validateSeatMap } from "@/services/persistence/jsonMapper";
+import { SeatMapRepository } from "@/services/persistence/seatMapRepository";
 import { strings } from "@/lib/i18n/strings";
 import { ElementFactory } from "@/services/factory/elementFactory";
 import { MapService } from "@/services/domain/mapService";
@@ -262,13 +260,12 @@ export const useSeatMapStore = create<EditorState>()(
       },
 
       exportJSON: () => {
-        return JSON.stringify(get().seatMap, null, 2);
+        return SeatMapRepository.serialize(get().seatMap);
       },
 
       importJSON: (json: string) => {
         try {
-          const data = JSON.parse(json);
-          const validatedSeatMap = validateSeatMap(data);
+          const validatedSeatMap = SeatMapRepository.deserialize(json);
 
           const existingIds = new Set<string>();
           validatedSeatMap.elements = validatedSeatMap.elements.map((el) => {
@@ -291,7 +288,7 @@ export const useSeatMapStore = create<EditorState>()(
 
           set({ seatMap: validatedSeatMap, selectedIds: [] });
         } catch (error) {
-          console.error("Failed to import JSON:", error);
+          console.error("Store: Failed to import JSON:", error);
           throw error;
         }
       },
