@@ -78,7 +78,24 @@ export const useSeatMapStore = create<EditorState>()(
             ...state.seatMap,
             elements: state.seatMap.elements.map((el) => {
               if (el.id === id) {
-                return { ...el, ...updates };
+                const updatedEl = { ...el, ...updates };
+
+                // Si es una fila y se actualizó el espaciado, recalculamos posiciones de asientos
+                if (
+                  updatedEl.type === "row" &&
+                  ("seatSpacing" in updates || "seats" in updates)
+                ) {
+                  const spacing = updatedEl.seatSpacing || 30;
+                  updatedEl.seats = updatedEl.seats.map(
+                    (s: Seat, i: number) => ({
+                      ...s,
+                      cx: i * spacing,
+                      cy: 0,
+                    }),
+                  );
+                }
+
+                return updatedEl;
               }
               if (el.type === "row" || el.type === "table") {
                 const hasSeat = el.seats.some((s) => s.id === id);
@@ -190,6 +207,7 @@ export const useSeatMapStore = create<EditorState>()(
             ...seatMap,
             elements: seatMap.elements.map((el) => {
               if (el.id === id && (el.type === "row" || el.type === "table")) {
+                const spacing = el.type === "row" ? el.seatSpacing || 30 : 0;
                 const currentSeats = el.seats || [];
                 const diff = count - currentSeats.length;
 
@@ -202,8 +220,7 @@ export const useSeatMapStore = create<EditorState>()(
                       id: `s-${crypto.randomUUID()}`,
                       type: "seat",
                       label: String(index + 1),
-                      cx:
-                        el.type === "row" ? index * (el.seatSpacing || 30) : 0,
+                      cx: el.type === "row" ? index * spacing : 0,
                       cy: 0,
                       status: "available",
                     });
@@ -211,6 +228,15 @@ export const useSeatMapStore = create<EditorState>()(
                 } else if (diff < 0) {
                   // Remove seats
                   newSeats = newSeats.slice(0, count);
+                }
+
+                // Recalculate all positions to be sure
+                if (el.type === "row") {
+                  newSeats = newSeats.map((s, i) => ({
+                    ...s,
+                    cx: i * spacing,
+                    cy: 0,
+                  }));
                 }
 
                 return { ...el, seats: newSeats };
