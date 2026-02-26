@@ -86,6 +86,14 @@ export const useSeatMapStore = create<EditorState>()(
             selectedIds: (state.selectedIds || []).filter(
               (id) => !ids.includes(id),
             ),
+            draggingId:
+              state.draggingId && ids.includes(state.draggingId)
+                ? null
+                : state.draggingId,
+            lastMousePosition:
+              state.draggingId && ids.includes(state.draggingId)
+                ? null
+                : state.lastMousePosition,
           };
         });
       },

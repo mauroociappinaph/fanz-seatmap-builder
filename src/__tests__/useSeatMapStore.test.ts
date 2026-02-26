@@ -143,4 +143,28 @@ describe("useSeatMapStore", () => {
       "Sector-B",
     );
   });
+
+  it("should clear draggingId if the element is removed", () => {
+    const rowId = "row-to-drag";
+    const newRow: Row = {
+      id: rowId,
+      type: "row",
+      label: "Row A",
+      position: { x: 100, y: 100 },
+      rotation: 0,
+      seats: [],
+      seatSpacing: 10,
+      seatCount: 0,
+    };
+
+    useSeatMapStore.getState().addElement(newRow);
+    useSeatMapStore.getState().startDragging(rowId, { x: 0, y: 0 });
+
+    expect(useSeatMapStore.getState().draggingId).toBe(rowId);
+
+    useSeatMapStore.getState().removeElements([rowId]);
+
+    expect(useSeatMapStore.getState().draggingId).toBeNull();
+    expect(useSeatMapStore.getState().lastMousePosition).toBeNull();
+  });
 });
