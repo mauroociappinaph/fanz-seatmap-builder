@@ -74,14 +74,13 @@ export const useSeatMapStore = create<EditorState>()(
         }));
       },
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      updateElement: (id: string, updates: Partial<any>) => {
+      updateElement: (id: string, updates: Partial<MapElement | Seat>) => {
         set((state) => ({
           seatMap: {
             ...state.seatMap,
             elements: state.seatMap.elements.map((el) => {
               if (el.id === id) {
-                const updatedEl = { ...el, ...updates };
+                const updatedEl = { ...el, ...updates } as MapElement;
 
                 // Si es una fila y se actualizó el espaciado o los asientos, recalculamos posiciones
                 if (

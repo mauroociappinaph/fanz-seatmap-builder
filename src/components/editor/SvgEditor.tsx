@@ -45,6 +45,14 @@ export const SvgEditor: React.FC = () => {
       return;
     }
 
+    // Deselect if clicking on the background (the major grid rect or the svg itself)
+    if (
+      e.target === e.currentTarget ||
+      (e.target as Element).id === "bg-grid"
+    ) {
+      useSeatMapStore.getState().setSelection([]);
+    }
+
     viewportMouseDown(e);
   };
 
@@ -126,6 +134,7 @@ export const SvgEditor: React.FC = () => {
 
         {/* Infinite Background Grid */}
         <rect
+          id="bg-grid"
           x={viewport.panX - 10000}
           y={viewport.panY - 10000}
           width={vbWidth + 20000}

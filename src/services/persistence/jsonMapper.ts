@@ -24,14 +24,15 @@ const RowSchema = z.object({
   rotation: z.number(),
   seats: z.array(SeatSchema),
   seatSpacing: z.number(),
+  seatCount: z.number(),
 });
 
 const AreaSchema = z.object({
   id: z.string(),
   type: z.literal("area"),
   label: z.string(),
-  path: z.string(),
-  position: PositionSchema,
+  points: z.array(PositionSchema),
+  color: z.string().optional(),
 });
 
 const TableSchema = z.object({
@@ -39,11 +40,11 @@ const TableSchema = z.object({
   type: z.literal("table"),
   label: z.string(),
   position: PositionSchema,
+  rotation: z.number(),
   shape: z.enum(["round", "rectangular"]),
   seats: z.array(SeatSchema),
-  radius: z.number().optional(),
-  width: z.number().optional(),
-  height: z.number().optional(),
+  width: z.number(),
+  height: z.number(),
 });
 
 const MapElementSchema = z.discriminatedUnion("type", [

@@ -27,6 +27,7 @@ describe("jsonMapper", () => {
           },
         ],
         seatSpacing: 5,
+        seatCount: 1,
       } as Row,
     ],
     viewport: { zoom: 1, panX: 0, panY: 0 },

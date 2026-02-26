@@ -39,7 +39,7 @@ export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
         <rect
           x={-15}
           y={-15}
-          width={row.seats.length * 25 + 10} // Simple heuristic
+          width={Math.max(40, row.seats.length * row.seatSpacing + 10)}
           height={30}
           fill="rgba(59, 130, 246, 0.05)"
           stroke="#3b82f6"
