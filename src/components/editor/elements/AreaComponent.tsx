@@ -40,7 +40,14 @@ export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
   return (
     <g
       onMouseDown={onMouseDown}
-      className="group cursor-move outline-none"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          selectElement(area.id, e.ctrlKey || e.metaKey);
+        }
+      }}
+      tabIndex={0}
+      className="group cursor-move outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
       role="region"
       aria-label={`Area ${area.label}`}
     >

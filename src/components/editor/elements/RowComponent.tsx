@@ -40,7 +40,14 @@ export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
     <g
       transform={`translate(${row.position.x}, ${row.position.y}) rotate(${row.rotation})`}
       onMouseDown={onMouseDown}
-      className="group cursor-move outline-none"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          selectElement(row.id, e.ctrlKey || e.metaKey);
+        }
+      }}
+      tabIndex={0}
+      className="group cursor-move outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
       role="group"
       aria-label={`Row ${row.label}, ${row.seats.length} seats`}
     >

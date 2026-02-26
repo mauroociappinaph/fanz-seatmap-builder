@@ -40,7 +40,14 @@ export const TableComponent: React.FC<TableComponentProps> = ({ table }) => {
     <g
       transform={`translate(${table.position.x}, ${table.position.y}) rotate(${table.rotation})`}
       onMouseDown={onMouseDown}
-      className="group cursor-move outline-none"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          selectElement(table.id, e.ctrlKey || e.metaKey);
+        }
+      }}
+      tabIndex={0}
+      className="group cursor-move outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
       role="group"
       aria-label={`Table ${table.label}, ${table.shape} shape, ${table.seats.length} seats`}
     >

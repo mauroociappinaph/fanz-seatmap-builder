@@ -45,3 +45,13 @@
 .glass-dark {
   @apply bg-white/80 backdrop-blur-lg border border-slate-200/50 shadow-lg;
 }
+
+/* Custom SVG Focus styles for Accessibility */
+g[tabindex="0"]:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 4px;
+}
+
+g[tabindex="0"]:focus:not(:focus-visible) {
+  outline: none;
+}
