@@ -2,8 +2,11 @@ import { useCallback, useRef } from "react";
 import { useSeatMapStore } from "@/store";
 
 export const useViewport = () => {
-  const { viewport } = useSeatMapStore((state) => state.seatMap);
+  const seatMap = useSeatMapStore((state) => state.seatMap);
   const updateViewport = useSeatMapStore((state) => state.updateViewport);
+
+  // Safety fallback if viewport is missing (e.g. during hydration or bad import)
+  const viewport = seatMap?.viewport || { zoom: 1, panX: 0, panY: 0 };
 
   const isPanning = useRef(false);
   const lastMousePos = useRef({ x: 0, y: 0 });
