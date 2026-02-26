@@ -80,6 +80,7 @@ export const strings = {
     newArea: "Nueva Área",
     rowLabel: "Fila",
     tableLabel: "Mesa",
+    areaLabel: "Área",
     seatLabel: "Asiento",
   },
 };

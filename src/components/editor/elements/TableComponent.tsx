@@ -10,7 +10,7 @@ interface TableComponentProps {
   table: Table;
 }
 
-export const TableComponent: React.FC<TableComponentProps> = ({ table }) => {
+const TableComponentBase: React.FC<TableComponentProps> = ({ table }) => {
   const isSelected = useSeatMapStore((state) =>
     state.selectedIds.includes(table.id),
   );
@@ -104,3 +104,6 @@ export const TableComponent: React.FC<TableComponentProps> = ({ table }) => {
     </g>
   );
 };
+
+export const TableComponent = React.memo(TableComponentBase);
+TableComponent.displayName = "TableComponent";

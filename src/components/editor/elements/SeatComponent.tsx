@@ -8,7 +8,7 @@ interface SeatComponentProps {
   onClick?: (isMulti: boolean) => void;
 }
 
-export const SeatComponent: React.FC<SeatComponentProps> = ({
+const SeatComponentBase: React.FC<SeatComponentProps> = ({
   seat,
   isSelected,
   onClick,
@@ -60,3 +60,6 @@ export const SeatComponent: React.FC<SeatComponentProps> = ({
     </g>
   );
 };
+
+export const SeatComponent = React.memo(SeatComponentBase);
+SeatComponent.displayName = "SeatComponent";

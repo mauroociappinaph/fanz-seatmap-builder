@@ -9,7 +9,7 @@ interface AreaComponentProps {
   area: Area;
 }
 
-export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
+const AreaComponentBase: React.FC<AreaComponentProps> = ({ area }) => {
   const isSelected = useSeatMapStore((state) =>
     state.selectedIds.includes(area.id),
   );
@@ -90,3 +90,6 @@ export const AreaComponent: React.FC<AreaComponentProps> = ({ area }) => {
     </g>
   );
 };
+
+export const AreaComponent = React.memo(AreaComponentBase);
+AreaComponent.displayName = "AreaComponent";

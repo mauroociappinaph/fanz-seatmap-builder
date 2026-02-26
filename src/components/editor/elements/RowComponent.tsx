@@ -10,7 +10,7 @@ interface RowComponentProps {
   row: Row;
 }
 
-export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
+const RowComponentBase: React.FC<RowComponentProps> = ({ row }) => {
   const isSelected = useSeatMapStore((state) =>
     state.selectedIds.includes(row.id),
   );
@@ -93,3 +93,6 @@ export const RowComponent: React.FC<RowComponentProps> = ({ row }) => {
     </g>
   );
 };
+
+export const RowComponent = React.memo(RowComponentBase);
+RowComponent.displayName = "RowComponent";
