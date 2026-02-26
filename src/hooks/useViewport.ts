@@ -10,6 +10,7 @@ export const useViewport = () => {
 
   const isPanning = useRef(false);
   const lastMousePos = useRef({ x: 0, y: 0 });
+  const rafRef = useRef<number | null>(null);
 
   const handleWheel = useCallback(
     (e: React.WheelEvent) => {
@@ -22,7 +23,11 @@ export const useViewport = () => {
         maxZoom,
         Math.max(minZoom, viewport.zoom - e.deltaY * zoomSpeed),
       );
-      updateViewport({ zoom: newZoom });
+
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        updateViewport({ zoom: newZoom });
+      });
     },
     [viewport.zoom, updateViewport],
   );
@@ -41,12 +46,17 @@ export const useViewport = () => {
       const dx = (e.clientX - lastMousePos.current.x) / viewport.zoom;
       const dy = (e.clientY - lastMousePos.current.y) / viewport.zoom;
 
-      updateViewport({
+      const nextPan = {
         panX: viewport.panX - dx,
         panY: viewport.panY - dy,
-      });
+      };
 
       lastMousePos.current = { x: e.clientX, y: e.clientY };
+
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        updateViewport(nextPan);
+      });
     },
     [viewport.zoom, viewport.panX, viewport.panY, updateViewport],
   );
