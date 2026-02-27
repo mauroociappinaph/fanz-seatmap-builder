@@ -83,16 +83,24 @@ export default function Home() {
   };
 
   const handleNewMap = () => {
-    toast.warning(strings.messages.newMapConfirm, {
-      description: strings.messages.newMapDesc,
-      action: {
-        label: strings.common.confirm,
-        onClick: () => {
-          newMap();
-          toast.success(strings.messages.newMapSuccess);
+    const { seatMap } = useSeatMapStore.getState();
+
+    // Only ask for confirmation if there are elements to lose
+    if (seatMap.elements.length > 0) {
+      toast.warning(strings.messages.newMapConfirm, {
+        description: strings.messages.newMapDesc,
+        action: {
+          label: strings.common.confirm,
+          onClick: () => {
+            newMap();
+            toast.success(strings.messages.newMapSuccess);
+          },
         },
-      },
-    });
+      });
+    } else {
+      newMap();
+      toast.success(strings.messages.newMapSuccess);
+    }
   };
 
   return (
