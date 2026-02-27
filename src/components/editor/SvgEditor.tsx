@@ -2,14 +2,14 @@
 "use client";
 
 import React from "react";
-import { useViewport, useResizeObserver } from "@/hooks";
+import { useViewport, useResizeObserver, useEditorShortcuts } from "@/hooks";
 import { useSeatMapStore } from "@/store";
 import { MapElements } from "./MapElements";
 import { clsx } from "clsx";
 
 export const SvgEditor: React.FC = () => {
   const svgRef = React.useRef<SVGSVGElement>(null);
-  const [isAltPressed, setIsAltPressed] = React.useState(false);
+  const { isAltPressed } = useEditorShortcuts();
 
   const {
     viewport,
@@ -41,24 +41,6 @@ export const SvgEditor: React.FC = () => {
   const vbWidth = baseWidth / viewport.zoom;
   const vbHeight = baseHeight / viewport.zoom;
   const viewBox = `${viewport.panX} ${viewport.panY} ${vbWidth} ${vbHeight}`;
-
-  // Determine cursor based on state
-  // Handle Alt key listeners for cursor feedback
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Alt") setIsAltPressed(true);
-    };
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "Alt") setIsAltPressed(false);
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, []);
 
   // Determine cursor based on state
   const getCursorClass = () => {
@@ -133,7 +115,6 @@ export const SvgEditor: React.FC = () => {
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          {/* Subtle SaaS Grid */}
           <pattern
             id="grid-minor"
             width="20"
@@ -175,7 +156,6 @@ export const SvgEditor: React.FC = () => {
           </pattern>
         </defs>
 
-        {/* Infinite Background Grid */}
         <rect
           id="bg-grid"
           x={viewport.panX - 10000}
@@ -185,7 +165,6 @@ export const SvgEditor: React.FC = () => {
           fill="url(#grid-major)"
         />
 
-        {/* Axis Crosshair (very subtle) */}
         <g opacity="0.3">
           <line
             x1="-50"
@@ -208,7 +187,6 @@ export const SvgEditor: React.FC = () => {
         <MapElements />
       </svg>
 
-      {/* SaaS Style Viewport Info */}
       <div className="absolute bottom-6 right-6 flex items-center gap-4 bg-white/90 backdrop-blur border border-slate-200 px-4 py-2 rounded-lg shadow-sm">
         <div className="flex flex-col gap-0.5">
           <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">

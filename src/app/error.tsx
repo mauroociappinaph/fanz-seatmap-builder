@@ -37,8 +37,13 @@ export default function Error({ error, reset }: ErrorProps) {
         <h2 className="text-xl font-bold text-slate-900 mb-2">
           {strings.common.error || "Algo salió mal"}
         </h2>
-        <p className="text-sm text-slate-500 mb-6 leading-relaxed">
-          {error.message || "Ha ocurrido un error inesperado en la aplicación."}
+        <p className="text-slate-500 mb-8 max-w-sm">
+          {error.message || strings.messages.genericError}
+          <br />
+          <span className="text-[10px] mt-2 block opacity-50">
+            Tip: If the editor failed to load, try refreshing your browser or
+            clearing local storage if the map data is corrupted.
+          </span>
         </p>
         <div className="flex flex-col gap-2">
           <button

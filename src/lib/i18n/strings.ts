@@ -73,6 +73,7 @@ export const strings = {
     importError: "Error al importar el mapa: JSON inválido",
     importLimitError: "El archivo es demasiado grande (máximo 5MB)",
     exportSuccess: "Mapa exportado y descargado",
+    genericError: "Ha ocurrido un error inesperado en la aplicación.",
   },
   elements: {
     newRow: "Fila",

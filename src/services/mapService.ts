@@ -83,23 +83,40 @@ export const MapService = {
 
   /**
    * Sanitizes and applies a new label based on element type.
+   * Removes control characters and limits length.
    */
   sanitizeLabel: (label: string, type: MapElement["type"] | "seat"): string => {
     const limit = MAX_LABEL_LENGTHS[type];
 
-    // Aggressive cleanup for typos like ", Área"
+    // Remove control characters, non-printable ASCII and potentially dangerous symbols
+    // Keeping alphanumeric, spaces, and basic punctuation
     const cleanLabel = label
+      .replace(/[\x00-\x1F\x7F-\x9F]/g, "") // Remove control chars
       .trim()
-      .replace(/^[,.\s]+/, "") // Remove leading commas, dots, or spaces
-      .replace(/[,.\s]+$/, ""); // Remove trailing commas, dots, or spaces
+      .replace(/^[,.\s]+/, "")
+      .replace(/[,.\s]+$/, "");
 
     return cleanLabel.slice(0, limit);
   },
 
   /**
-   * Helper to round coordinates to prevent floating point drift.
+   * Helper to round coordinates and keep them within sane bounds (-50k to 50k)
    */
-  roundCoordinate: (val: number): number => Math.round(val * 100) / 100,
+  roundCoordinate: (val: number): number => {
+    const rounded = Math.round(val * 100) / 100;
+    return Math.min(50000, Math.max(-50000, rounded));
+  },
+
+  /**
+   * Calculates a new position based on delta movement, ensuring rounding.
+   */
+  calculateNewPosition: (
+    current: { x: number; y: number },
+    delta: { x: number; y: number },
+  ): { x: number; y: number } => ({
+    x: MapService.roundCoordinate(current.x + delta.x),
+    y: MapService.roundCoordinate(current.y + delta.y),
+  }),
 
   /**
    * Applies a set of updates to an existing element, encapsulating all business rules:

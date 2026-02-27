@@ -3,7 +3,7 @@ import React from "react";
 import { Row } from "@/domain";
 import { SeatComponent } from "./SeatComponent";
 import { useSeatMapStore } from "@/store";
-import { useViewport } from "@/hooks";
+import { useViewport, useElementInteraction } from "@/hooks";
 import { strings } from "@/lib";
 
 interface RowComponentProps {
@@ -11,31 +11,9 @@ interface RowComponentProps {
 }
 
 const RowComponentBase: React.FC<RowComponentProps> = ({ row }) => {
-  const isSelected = useSeatMapStore((state) =>
-    state.selectedIds.includes(row.id),
-  );
+  const { isSelected, onMouseDown } = useElementInteraction(row.id);
   const selectElement = useSeatMapStore((state) => state.selectElement);
-  const startDragging = useSeatMapStore((state) => state.startDragging);
-  const setActiveTool = useSeatMapStore((state) => state.setActiveTool);
   const selectedIds = useSeatMapStore((state) => state.selectedIds);
-
-  const { screenToSVG } = useViewport();
-
-  const onMouseDown = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Evita que el click llegue al fondo del SVG
-    const svg = (e.currentTarget as SVGElement).ownerSVGElement;
-    if (svg) {
-      const pos = screenToSVG(e.clientX, e.clientY, svg);
-      const isMulti = e.ctrlKey || e.metaKey;
-
-      if (isMulti || !isSelected) {
-        selectElement(row.id, isMulti);
-      }
-
-      startDragging(row.id, pos);
-      setActiveTool("select");
-    }
-  };
 
   return (
     <g

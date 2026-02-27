@@ -3,7 +3,7 @@ import React from "react";
 import { Table } from "@/domain";
 import { SeatComponent } from "./SeatComponent";
 import { useSeatMapStore } from "@/store";
-import { useViewport } from "@/hooks";
+import { useViewport, useElementInteraction } from "@/hooks";
 import { strings } from "@/lib";
 
 interface TableComponentProps {
@@ -11,31 +11,9 @@ interface TableComponentProps {
 }
 
 const TableComponentBase: React.FC<TableComponentProps> = ({ table }) => {
-  const isSelected = useSeatMapStore((state) =>
-    state.selectedIds.includes(table.id),
-  );
+  const { isSelected, onMouseDown } = useElementInteraction(table.id);
   const selectedIds = useSeatMapStore((state) => state.selectedIds);
   const selectElement = useSeatMapStore((state) => state.selectElement);
-  const startDragging = useSeatMapStore((state) => state.startDragging);
-  const setActiveTool = useSeatMapStore((state) => state.setActiveTool);
-
-  const { screenToSVG } = useViewport();
-
-  const onMouseDown = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const svg = (e.currentTarget as SVGElement).ownerSVGElement;
-    if (svg) {
-      const pos = screenToSVG(e.clientX, e.clientY, svg);
-      const isMulti = e.ctrlKey || e.metaKey;
-
-      if (isMulti || !isSelected) {
-        selectElement(table.id, isMulti);
-      }
-
-      startDragging(table.id, pos);
-      setActiveTool("select");
-    }
-  };
 
   return (
     <g
