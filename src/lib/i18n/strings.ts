@@ -67,6 +67,7 @@ export const strings = {
     deleteDesc: "Esta acción no se puede deshacer.",
     deleteSuccess: "Elementos eliminados",
     newMapConfirm: "¿Estás seguro? Se perderán los cambios no guardados.",
+    newMapDesc: "Esta acción limpiará todos los elementos actuales del lienzo.",
     newMapSuccess: "Nuevo mapa creado",
     importSuccess: "Mapa importado correctamente",
     importError: "Error al importar el mapa: JSON inválido",

@@ -39,7 +39,6 @@ export default function Home() {
 
   const handleExport = () => {
     const json = exportJSON();
-    console.log(json);
     // Trigger download
     const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -84,10 +83,16 @@ export default function Home() {
   };
 
   const handleNewMap = () => {
-    if (confirm(strings.messages.newMapConfirm)) {
-      newMap();
-      toast.success(strings.messages.newMapSuccess);
-    }
+    toast.warning(strings.messages.newMapConfirm, {
+      description: strings.messages.newMapDesc,
+      action: {
+        label: strings.common.confirm,
+        onClick: () => {
+          newMap();
+          toast.success(strings.messages.newMapSuccess);
+        },
+      },
+    });
   };
 
   return (
