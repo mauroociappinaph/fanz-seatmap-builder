@@ -4,8 +4,6 @@ import {
   SeatMap,
   Seat,
   MAX_LABEL_LENGTHS,
-  Row,
-  Table,
   EditorState,
 } from "@/domain";
 import { strings } from "@/lib";
@@ -108,104 +106,36 @@ export const createMapSlice: StateCreator<EditorState, [], [], MapSlice> = (
   },
 
   updateElement: (id: string, updates: Partial<MapElement | Seat>) => {
-    const sanitizedUpdates = { ...updates };
-    if ("label" in sanitizedUpdates && sanitizedUpdates.label) {
-      const targetType = (sanitizedUpdates as { type?: string }).type || "row";
-      sanitizedUpdates.label = MapService.sanitizeLabel(
-        sanitizedUpdates.label,
-        targetType === "row" ||
-          targetType === "table" ||
-          targetType === "area" ||
-          targetType === "seat"
-          ? (targetType as MapElement["type"] | "seat")
-          : "row",
-      );
-    }
-
     set((state) => {
       const elements = state.seatMap?.elements || [];
       return {
         seatMap: {
           ...(state.seatMap || initialSeatMap),
           elements: elements.map((el): MapElement => {
+            // Direct element match: delegate all logic to MapService
             if (el.id === id) {
-              let updatedEl = {
-                ...el,
-                ...sanitizedUpdates,
-              } as MapElement;
-
-              const typeLimit = MAX_LABEL_LENGTHS[updatedEl.type];
-              if (updatedEl.label.length > typeLimit) {
-                updatedEl.label = updatedEl.label.slice(0, typeLimit);
-              }
-
-              const hasCapacity = "capacity" in updates;
-              const hasSeatCount = "seatCount" in updates;
-
-              if (hasCapacity || hasSeatCount) {
-                const newCount = hasCapacity
-                  ? (updates as { capacity: number }).capacity
-                  : (updates as { seatCount: number }).seatCount;
-                updatedEl = MapService.adjustSeatCount(updatedEl, newCount);
-              }
-
-              if (
-                updatedEl.type === "row" &&
-                ("seatSpacing" in updates || "seats" in updates)
-              ) {
-                updatedEl = MapService.refreshLayout(updatedEl);
-              }
-
-              if (updatedEl.type === "table") {
-                const tableEl = updatedEl as Table;
-                if ("shape" in updates) {
-                  const newShape = (
-                    updates as {
-                      shape: "round" | "rectangular";
-                    }
-                  ).shape;
-                  if (
-                    newShape === "rectangular" &&
-                    tableEl.width === tableEl.height
-                  ) {
-                    tableEl.width = Math.round(tableEl.width * 1.5);
-                    tableEl.height = Math.round(tableEl.height * 0.8);
-                  } else if (newShape === "round") {
-                    const avg = Math.round(
-                      (tableEl.width + tableEl.height) / 2,
-                    );
-                    tableEl.width = avg;
-                    tableEl.height = avg;
-                  }
-                }
-                if (
-                  "shape" in updates ||
-                  "width" in updates ||
-                  "height" in updates ||
-                  "seats" in updates
-                ) {
-                  updatedEl = MapService.refreshLayout(tableEl);
-                }
-              }
-
-              return updatedEl;
+              return MapService.applyElementUpdate(el, updates);
             }
 
+            // Nested seat match inside a row or table
             if (el.type === "row" || el.type === "table") {
               const seatIndex = el.seats.findIndex((s) => s.id === id);
               if (seatIndex !== -1) {
                 const newSeats = [...el.seats];
-                newSeats[seatIndex] = {
+                const updatedSeat = {
                   ...newSeats[seatIndex],
-                  ...sanitizedUpdates,
+                  ...updates,
+                  type: "seat" as const,
                 } as Seat;
-                newSeats[seatIndex].type = "seat";
-                if (newSeats[seatIndex].label.length > MAX_LABEL_LENGTHS.seat) {
-                  newSeats[seatIndex].label = newSeats[seatIndex].label.slice(
+
+                // Enforce seat label limit
+                if (updatedSeat.label.length > MAX_LABEL_LENGTHS.seat) {
+                  updatedSeat.label = updatedSeat.label.slice(
                     0,
                     MAX_LABEL_LENGTHS.seat,
                   );
                 }
+                newSeats[seatIndex] = updatedSeat;
                 return { ...el, seats: newSeats } as MapElement;
               }
             }

@@ -1,5 +1,12 @@
 // src/services/mapService.ts
-import { MapElement, MAX_LABEL_LENGTHS, Row, Table, SeatMap } from "@/domain";
+import {
+  MapElement,
+  MAX_LABEL_LENGTHS,
+  Row,
+  Table,
+  SeatMap,
+  Seat,
+} from "@/domain";
 import { calculateTableSeatPositions } from "./layout";
 
 export const MapService = {
@@ -93,6 +100,82 @@ export const MapService = {
    * Helper to round coordinates to prevent floating point drift.
    */
   roundCoordinate: (val: number): number => Math.round(val * 100) / 100,
+
+  /**
+   * Applies a set of updates to an existing element, encapsulating all business rules:
+   * - Label sanitization using the real element type (fixes type-safety bug)
+   * - Seat count adjustment and layout recalculation
+   * - Table shape dimension normalization
+   *
+   * Extracted from the monolithic updateElement slice action (God Function refactor).
+   */
+  applyElementUpdate: (
+    existing: MapElement,
+    updates: Partial<MapElement | Seat>,
+  ): MapElement => {
+    const sanitizedUpdates = { ...updates };
+
+    // Use the EXISTING element's real type — not updates.type (which may be absent)
+    // This fixes the bug where type defaulted to "row" for all element types.
+    if ("label" in sanitizedUpdates && sanitizedUpdates.label) {
+      sanitizedUpdates.label = MapService.sanitizeLabel(
+        sanitizedUpdates.label,
+        existing.type,
+      );
+    }
+
+    let updatedEl = { ...existing, ...sanitizedUpdates } as MapElement;
+
+    // Enforce label length ceiling as a hard stop
+    const typeLimit = MAX_LABEL_LENGTHS[updatedEl.type];
+    if (updatedEl.label.length > typeLimit) {
+      updatedEl.label = updatedEl.label.slice(0, typeLimit);
+    }
+
+    // Adjust seat count if capacity or seatCount changed
+    const hasCapacity = "capacity" in updates;
+    const hasSeatCount = "seatCount" in updates;
+    if (hasCapacity || hasSeatCount) {
+      const newCount = hasCapacity
+        ? (updates as { capacity: number }).capacity
+        : (updates as { seatCount: number }).seatCount;
+      updatedEl = MapService.adjustSeatCount(updatedEl, newCount);
+    }
+
+    // Recalculate row layout if spacing or seats changed
+    if (
+      updatedEl.type === "row" &&
+      ("seatSpacing" in updates || "seats" in updates)
+    ) {
+      updatedEl = MapService.refreshLayout(updatedEl);
+    }
+
+    // Handle table shape change: normalize dimensions for visual consistency
+    if (updatedEl.type === "table") {
+      const tableEl = updatedEl as Table;
+      if ("shape" in updates) {
+        const newShape = (updates as { shape: "round" | "rectangular" }).shape;
+        if (newShape === "rectangular" && tableEl.width === tableEl.height) {
+          tableEl.width = Math.round(tableEl.width * 1.5);
+          tableEl.height = Math.round(tableEl.height * 0.8);
+        } else if (newShape === "round") {
+          const avg = Math.round((tableEl.width + tableEl.height) / 2);
+          tableEl.width = avg;
+          tableEl.height = avg;
+        }
+      }
+      if (
+        "shape" in updates ||
+        "width" in updates ||
+        "height" in updates ||
+        "seats" in updates
+      ) {
+        updatedEl = MapService.refreshLayout(tableEl);
+      }
+    }
+
+    return updatedEl;
+  },
 
   /**
    * Deep cleans the seat map data before export.
