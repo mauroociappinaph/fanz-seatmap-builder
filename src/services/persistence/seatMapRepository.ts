@@ -4,8 +4,6 @@ import { validateSeatMap } from "./jsonMapper";
 import { MapService } from "../mapService";
 
 export interface ISeatMapRepository {
-  save(seatMap: SeatMap): void;
-  load(): SeatMap | null;
   serialize(seatMap: SeatMap): string;
   deserialize(json: string): SeatMap;
 }
@@ -38,26 +36,5 @@ export const SeatMapRepository: ISeatMapRepository = {
       console.error("Repository: Failed to deserialize SeatMap", error);
       throw error;
     }
-  },
-
-  /**
-   * Saves the seat map to browser storage (optional helper).
-   * Note: Zustand 'persist' handles this automatically for the state,
-   * but this method is available for manual snapshots.
-   */
-  save(seatMap: SeatMap): void {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("fanz-seatmap-snapshot", this.serialize(seatMap));
-    }
-  },
-
-  /**
-   * Loads a seat map from browser storage.
-   */
-  load(): SeatMap | null {
-    if (typeof window === "undefined") return null;
-    const json = localStorage.getItem("fanz-seatmap-snapshot");
-    if (!json) return null;
-    return this.deserialize(json);
   },
 };

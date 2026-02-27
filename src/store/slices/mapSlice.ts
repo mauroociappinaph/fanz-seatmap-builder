@@ -7,7 +7,12 @@ import {
   EditorState,
 } from "@/domain";
 import { strings } from "@/lib";
-import { MapService, SeatMapRepository, parsePattern } from "@/services";
+import {
+  MapService,
+  SeatMapRepository,
+  parsePattern,
+  ElementFactory,
+} from "@/services";
 
 export interface MapSlice {
   seatMap: SeatMap;
@@ -20,9 +25,13 @@ export interface MapSlice {
   importJSON: (json: string) => void;
   applyBulkLabels: (pattern: string) => void;
   updateSeatCount: (id: string, count: number) => void;
+  addRow: (pos?: { x: number; y: number }) => void;
+  addTable: (pos?: { x: number; y: number }) => void;
+  addArea: (pos?: { x: number; y: number }) => void;
 }
 
 export const initialSeatMap: SeatMap = {
+  // ... existing initialSeatMap ...
   id: "initial-map",
   name: strings.nav.newMap,
   elements: [],
@@ -247,5 +256,68 @@ export const createMapSlice: StateCreator<EditorState, [], [], MapSlice> = (
         updatedAt: new Date().toISOString(),
       },
     }));
+  },
+
+  addRow: (pos) => {
+    const { seatMap, creationConfig } = get();
+    const position = pos || {
+      x: seatMap.viewport.panX + 100,
+      y: seatMap.viewport.panY + 100,
+    };
+
+    const existingCount = seatMap.elements.filter(
+      (el) => el.type === "row",
+    ).length;
+    const label = `${strings.elements.newRow} ${existingCount + 1}`;
+
+    const newRow = ElementFactory.createRow(
+      position,
+      creationConfig.rowSeats,
+      30,
+      label,
+    );
+    get().addElement(newRow);
+    get().setSelection([newRow.id]);
+    get().setActiveTool("select");
+  },
+
+  addTable: (pos) => {
+    const { seatMap, creationConfig } = get();
+    const position = pos || {
+      x: seatMap.viewport.panX + 200,
+      y: seatMap.viewport.panY + 200,
+    };
+
+    const existingCount = seatMap.elements.filter(
+      (el) => el.type === "table",
+    ).length;
+    const label = `${strings.elements.newTable} ${existingCount + 1}`;
+
+    const newTable = ElementFactory.createTable(
+      position,
+      creationConfig.tableSeats,
+      label,
+    );
+    get().addElement(newTable);
+    get().setSelection([newTable.id]);
+    get().setActiveTool("select");
+  },
+
+  addArea: (pos) => {
+    const { seatMap } = get();
+    const startPos = pos || {
+      x: seatMap.viewport.panX + 150,
+      y: seatMap.viewport.panY + 150,
+    };
+
+    const existingCount = seatMap.elements.filter(
+      (el) => el.type === "area",
+    ).length;
+    const label = `${strings.elements.newArea} ${existingCount + 1}`;
+
+    const newArea = ElementFactory.createArea(startPos, label);
+    get().addElement(newArea);
+    get().setSelection([newArea.id]);
+    get().setActiveTool("select");
   },
 });
