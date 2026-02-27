@@ -1,18 +1,8 @@
 import { StateCreator } from "zustand";
-import {
-  MapElement,
-  SeatMap,
-  Seat,
-  MAX_LABEL_LENGTHS,
-  EditorState,
-} from "@/domain";
+import { MapElement, SeatMap, Seat, EditorState } from "@/domain";
 import { strings } from "@/lib";
-import {
-  MapService,
-  SeatMapRepository,
-  parsePattern,
-  ElementFactory,
-} from "@/services";
+import { toast } from "sonner";
+import { MapService, SeatMapRepository, ElementFactory } from "@/services";
 
 export interface MapSlice {
   seatMap: SeatMap;
@@ -83,18 +73,7 @@ export const createMapSlice: StateCreator<EditorState, [], [], MapSlice> = (
   removeElements: (ids: string[]) => {
     set((state) => {
       const elements = state.seatMap?.elements || [];
-      const filteredElements: MapElement[] = elements
-        .filter((el) => !ids.includes(el.id))
-        .map((el): MapElement => {
-          if (el.type === "row" || el.type === "table") {
-            const filteredSeats = el.seats.filter((s) => !ids.includes(s.id));
-            return MapService.refreshLayout({
-              ...el,
-              seats: filteredSeats,
-            } as MapElement);
-          }
-          return el;
-        });
+      const filteredElements = MapService.removeElements(elements, ids);
 
       return {
         seatMap: {
@@ -124,29 +103,27 @@ export const createMapSlice: StateCreator<EditorState, [], [], MapSlice> = (
         seatMap: {
           ...(state.seatMap || initialSeatMap),
           elements: elements.map((el): MapElement => {
-            // Direct element match: delegate all logic to MapService
+            // Direct element match
             if (el.id === id) {
               return MapService.applyElementUpdate(el, updates);
             }
 
-            // Nested seat match inside a row or table
+            // Nested seat match
             if (el.type === "row" || el.type === "table") {
               const seatIndex = el.seats.findIndex((s) => s.id === id);
               if (seatIndex !== -1) {
                 const newSeats = [...el.seats];
-                const updatedSeat = {
+                const rawSeat = {
                   ...newSeats[seatIndex],
                   ...updates,
+                } as Seat;
+
+                const updatedSeat = {
+                  ...rawSeat,
+                  label: MapService.sanitizeLabel(rawSeat.label, "seat"),
                   type: "seat" as const,
                 } as Seat;
 
-                // Enforce seat label limit
-                if (updatedSeat.label.length > MAX_LABEL_LENGTHS.seat) {
-                  updatedSeat.label = updatedSeat.label.slice(
-                    0,
-                    MAX_LABEL_LENGTHS.seat,
-                  );
-                }
                 newSeats[seatIndex] = updatedSeat;
                 return { ...el, seats: newSeats } as MapElement;
               }
@@ -179,7 +156,7 @@ export const createMapSlice: StateCreator<EditorState, [], [], MapSlice> = (
   importJSON: (json: string) => {
     try {
       const validatedSeatMap = SeatMapRepository.deserialize(json);
-
+      // Ensure unique IDs on import
       const existingIds = new Set<string>();
       validatedSeatMap.elements = validatedSeatMap.elements.map((el) => {
         if (existingIds.has(el.id)) {
@@ -200,44 +177,28 @@ export const createMapSlice: StateCreator<EditorState, [], [], MapSlice> = (
       });
 
       set({ seatMap: validatedSeatMap, selectedIds: [] });
+      toast.success(strings.messages.importSuccess);
     } catch (error) {
       console.error("Store: Failed to import JSON:", error);
+      toast.error(
+        error instanceof Error ? error.message : strings.messages.importError,
+      );
       throw error;
     }
   },
 
   applyBulkLabels: (pattern: string) => {
-    const labels = parsePattern(pattern);
     const { selectedIds, seatMap } = get();
-
-    if (labels.length === 0 || !selectedIds || selectedIds.length === 0) return;
+    if (!selectedIds || selectedIds.length === 0) return;
 
     set({
       seatMap: {
         ...seatMap,
-        elements: seatMap.elements.map((el): MapElement => {
-          if (selectedIds.includes(el.id)) {
-            const index = selectedIds.indexOf(el.id);
-            let label = labels[index % labels.length];
-            label = MapService.sanitizeLabel(label, el.type);
-            return { ...el, label } as MapElement;
-          }
-
-          if (el.type === "row" || el.type === "table") {
-            const updatedSeats = el.seats.map((s) => {
-              if (selectedIds.includes(s.id)) {
-                const index = selectedIds.indexOf(s.id);
-                let label = labels[index % labels.length];
-                label = MapService.sanitizeLabel(label, "seat");
-                return { ...s, label };
-              }
-              return s;
-            });
-            return { ...el, seats: updatedSeats } as MapElement;
-          }
-
-          return el;
-        }),
+        elements: MapService.applyBulkLabels(
+          seatMap.elements,
+          selectedIds,
+          pattern,
+        ),
         updatedAt: new Date().toISOString(),
       },
     });

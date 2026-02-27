@@ -2,7 +2,7 @@
 
 > Editor visual interactivo para diseñar mapas de asientos. Inspirado en [Seats.io](https://seats.io/).
 
-![Stack](https://img.shields.io/badge/Stack-Next.js%2014%20%2B%20TypeScript%20%2B%20Zustand-blue)
+![Stack](https://img.shields.io/badge/Stack-Next.js%2016%20%2B%20TypeScript%20%2B%20React%2019-blue)
 ![Tests](https://img.shields.io/badge/Tests-Jest%20%2B%20Testing%20Library-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
@@ -92,10 +92,16 @@ src/
 │   └── useSeatMapStore.ts # Estado global con Zustand
 ├── services/
 │   ├── labeling/          # Parser de patrones de etiquetado
-│   └── persistence/       # Import/Export JSON con Zod
+│   ├── layout/            # Lógica trigonométrica de posicionamiento
+│   ├── persistence/       # Import/Export JSON con Zod
+│   ├── layoutService.ts   # Fragmento: Coordenadas y Layout
+│   ├── elementService.ts  # Fragmento: CRUD y Lógica de Negocio
+│   ├── sanitizationService.ts # Fragmento: Limpieza de inputs
+│   └── mapService.ts      # Fachada principal de servicios
 ├── hooks/
-│   └── useViewport.ts     # Control de cámara (zoom/pan)
-└── __tests__/             # Tests unitarios
+│   ├── useViewport.ts     # Control de cámara (zoom/pan)
+│   └── useElementInteraction.ts # Lógica de interacción SVG
+└── __tests__/             # Tests unitarios (Jest)
 ```
 
 ---
@@ -249,7 +255,7 @@ useSeatMapStore.getState().importJSON(jsonString);
 
 | Tecnología   | Propósito                     |
 | ------------ | ----------------------------- |
-| Next.js 16   | Framework React con App Router |
+| Next.js 16   | Framework React con App Router (React 19) |
 | TypeScript   | Type safety y DX              |
 | Zustand      | Gestión de estado             |
 | Tailwind CSS | Estilos utilitarios           |
@@ -279,12 +285,10 @@ useSeatMapStore.getState().importJSON(jsonString);
 
 ## 🧩 Próximas Mejoras
 
-- [ ] Configuración de cantidad de asientos al crear fila
-- [ ] Botón "Nuevo Mapa" en UI
-- [ ] Importación de JSON desde archivo
-- [ ] Undo/Redo
 - [ ] Selección por área (lasso)
-- [ ] Preview en tiempo real
+- [ ] Undo/Redo
+- [ ] Soporte para dispositivos Touch
+- [ ] Preview de impresión
 - [ ] Temas personalizables
 
 ---

@@ -20,6 +20,7 @@ El **SeatMapBuilder** es una herramienta de edición visual diseñada para crear
 *   **Domain-Driven Design (DDD) Lite:** Separación clara entre `domain` (tipos), `store` (lógica de estado), `services` (lógica pura) y `components` (UI).
 *   **Single Responsibility Principle (SRP):** Componentes pequeños y enfocados (ej. `RowComponent`, `Inspector`, `Toolbar`).
 *   **Atomic Design:** Organización de componentes en `ui` (átomos/moléculas) y `editor` (organismos).
+*   **Custom Hooks Pattern:** Centralización de lógica de interacción en `useElementInteraction` y atajos en `useEditorShortcuts`.
 
 ---
 
