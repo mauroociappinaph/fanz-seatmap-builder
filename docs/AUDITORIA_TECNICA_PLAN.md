@@ -143,6 +143,22 @@
 
 ---
 
+### Punto 8.1 — Resolver warning de lockfiles múltiples en Next.js build
+- **Problema:** Durante el build de Sprint 1 se detectó un warning: Next.js encontró un `package-lock.json` en `/Users/mauroociappina/` que interfiere con la detección del workspace root, causando ruido en los builds.
+- **Archivos:** `next.config.ts`
+- **Pasos:**
+  1. Agregar `turbopack.root` al config de Next.js:
+     ```ts
+     const nextConfig: NextConfig = {
+       turbopack: { root: __dirname },
+     };
+     ```
+  2. Verificar con `npm run build` que el warning desaparece.
+- **Criterio de aceptación:** `npm run build` sin warnings de lockfiles o workspace root.
+
+---
+
+
 ## 🟢 Sprint 3 — Mejoras de Largo Plazo (Backlog)
 
 ### Punto 9 — Estandarizar comentarios al inglés
