@@ -1,2 +1,2 @@
 export * from "./jsonMapper";
-export * from "./SeatMapRepository";
+export * from "./seatMapRepository";
