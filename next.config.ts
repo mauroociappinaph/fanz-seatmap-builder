@@ -3,9 +3,11 @@ import path from "node:path";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  // @ts-ignore - turbopack is a valid key in Next.js 15+ but types might be missing in some versions
-  turbopack: {
-    root: path.resolve(__dirname),
+  experimental: {
+    turbo: {
+      // Force the root to the project directory to avoid home directory package resolution issues
+      root: path.resolve(__dirname),
+    },
   },
 };
 

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { EditorState, Row } from "@/domain";
+import { EditorState } from "@/domain";
 import { createMapSlice, createUISlice } from "./slices";
 
 export const useSeatMapStore = create<EditorState>()(
@@ -11,23 +11,19 @@ export const useSeatMapStore = create<EditorState>()(
     }),
     {
       name: "fanz-seatmap-storage",
-      version: 1,
+      version: 2,
       migrate: (persistedState: unknown, version: number) => {
-        if (version === 0) {
-          const state = persistedState as EditorState;
-          if (state.seatMap?.elements) {
-            state.seatMap.elements = state.seatMap.elements.map((el) => {
-              if (el.type === "row" && !("seatCount" in el)) {
-                const rowEl = el as unknown as Row;
-                return {
-                  ...rowEl,
-                  seatCount: rowEl.seats?.length || 0,
-                } as Row;
-              }
-              return el;
-            });
+        if (version === 1) {
+          const state = persistedState as {
+            seatMap?: { elements?: Record<string, unknown> | unknown[] };
+          };
+          // If elements is a Record (object), convert it back to Array or just reset
+          if (
+            state.seatMap?.elements &&
+            !Array.isArray(state.seatMap.elements)
+          ) {
+            state.seatMap.elements = Object.values(state.seatMap.elements);
           }
-          return state;
         }
         return persistedState as EditorState;
       },

@@ -3,7 +3,7 @@ import React from "react";
 import { Table } from "@/domain";
 import { SeatComponent } from "./SeatComponent";
 import { useSeatMapStore } from "@/store";
-import { useViewport, useElementInteraction } from "@/hooks";
+import { useElementInteraction } from "@/hooks";
 import { strings } from "@/lib";
 
 interface TableComponentProps {

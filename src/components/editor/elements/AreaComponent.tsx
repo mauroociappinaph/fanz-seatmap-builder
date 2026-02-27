@@ -2,7 +2,7 @@
 import React from "react";
 import { Area } from "@/domain";
 import { useSeatMapStore } from "@/store";
-import { useViewport, useElementInteraction } from "@/hooks";
+import { useElementInteraction } from "@/hooks";
 import { strings } from "@/lib";
 
 interface AreaComponentProps {
@@ -12,8 +12,6 @@ interface AreaComponentProps {
 const AreaComponentBase: React.FC<AreaComponentProps> = ({ area }) => {
   const { isSelected, onMouseDown } = useElementInteraction(area.id);
   const selectElement = useSeatMapStore((state) => state.selectElement);
-
-  const { screenToSVG } = useViewport();
 
   // Convert points array to SVG polygon string
   const pointsString = area.points.map((p) => `${p.x},${p.y}`).join(" ");

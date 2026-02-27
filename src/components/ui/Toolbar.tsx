@@ -12,10 +12,8 @@ import {
 } from "lucide-react";
 import { clsx } from "clsx";
 import { strings } from "@/lib";
-import { EditorState } from "@/domain";
 
 interface ToolButtonProps {
-  tool: EditorState["activeTool"];
   icon: LucideIcon;
   label: string;
   isActive: boolean;
@@ -23,7 +21,6 @@ interface ToolButtonProps {
 }
 
 const ToolButton: React.FC<ToolButtonProps> = ({
-  tool,
   icon: Icon,
   label,
   isActive,
@@ -104,7 +101,6 @@ export const Toolbar: React.FC = () => {
         {TOOLS.map((t) => (
           <ToolButton
             key={t.tool}
-            tool={t.tool}
             icon={t.icon}
             label={t.label}
             isActive={activeTool === t.tool}
