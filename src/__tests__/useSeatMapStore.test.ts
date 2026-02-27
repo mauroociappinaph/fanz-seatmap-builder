@@ -209,3 +209,20 @@ describe("useSeatMapStore", () => {
     expect(updatedRow.seats[0].label.length).toBe(10);
   });
 });
+
+describe("useSeatMapStore: UI state reset", () => {
+  it("should reset UI state when newMap is called", () => {
+    // Set some non-initial state
+    useSeatMapStore.getState().setActiveTool("addRow");
+    useSeatMapStore.getState().startDragging("some-id", { x: 10, y: 10 });
+
+    // Trigger reset
+    useSeatMapStore.getState().newMap();
+
+    const state = useSeatMapStore.getState();
+    expect(state.activeTool).toBe("select");
+    expect(state.draggingId).toBeNull();
+    expect(state.lastMousePosition).toBeNull();
+    expect(state.selectedIds).toHaveLength(0);
+  });
+});

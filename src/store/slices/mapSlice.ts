@@ -47,6 +47,9 @@ export const createMapSlice: StateCreator<EditorState, [], [], MapSlice> = (
         updatedAt: new Date().toISOString(),
       },
       selectedIds: [],
+      activeTool: "select",
+      draggingId: null,
+      lastMousePosition: null,
     });
   },
 

@@ -70,12 +70,3 @@ const SeatMapSchema = z.object({
 export const validateSeatMap = (data: unknown): SeatMap => {
   return SeatMapSchema.parse(data) as SeatMap;
 };
-
-export const exportSeatMapToJSON = (seatMap: SeatMap): string => {
-  return JSON.stringify(seatMap, null, 2);
-};
-
-export const importSeatMapFromJSON = (json: string): SeatMap => {
-  const data = JSON.parse(json);
-  return validateSeatMap(data);
-};

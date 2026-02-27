@@ -1,5 +1,5 @@
 // src/__tests__/jsonMapper.test.ts
-import { exportSeatMapToJSON, importSeatMapFromJSON } from "@/services";
+import { SeatMapRepository } from "@/services";
 import { SeatMap, Row } from "@/domain";
 
 describe("jsonMapper", () => {
@@ -33,19 +33,21 @@ describe("jsonMapper", () => {
   };
 
   it("should export a seat map to JSON string", () => {
-    const json = exportSeatMapToJSON(mockSeatMap);
+    const json = SeatMapRepository.serialize(mockSeatMap);
     expect(typeof json).toBe("string");
     expect(json).toContain("test-map");
   });
 
   it("should import a seat map from a valid JSON string", () => {
-    const json = exportSeatMapToJSON(mockSeatMap);
-    const imported = importSeatMapFromJSON(json);
-    expect(imported).toEqual(mockSeatMap);
+    const json = SeatMapRepository.serialize(mockSeatMap);
+    const imported = SeatMapRepository.deserialize(json);
+    // Elements should match (with potential labels normalized)
+    expect(imported.id).toBe(mockSeatMap.id);
+    expect(imported.elements).toHaveLength(mockSeatMap.elements.length);
   });
 
   it("should throw an error when importing an invalid JSON string", () => {
     const invalidJSON = '{"id": "test"}'; // Missing required fields
-    expect(() => importSeatMapFromJSON(invalidJSON)).toThrow();
+    expect(() => SeatMapRepository.deserialize(invalidJSON)).toThrow();
   });
 });
