@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { useViewport } from "@/hooks";
+import { useViewport, useResizeObserver } from "@/hooks";
 import { useSeatMapStore } from "@/store";
 import { MapElements } from "./MapElements";
 import { clsx } from "clsx";
@@ -31,6 +31,18 @@ export const SvgEditor: React.FC = () => {
     draggingId,
   } = useSeatMapStore();
 
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const { width, height } = useResizeObserver(containerRef);
+
+  // Fallback for SSR or initial render
+  const baseWidth = width || 1200;
+  const baseHeight = height || 800;
+
+  const vbWidth = baseWidth / viewport.zoom;
+  const vbHeight = baseHeight / viewport.zoom;
+  const viewBox = `${viewport.panX} ${viewport.panY} ${vbWidth} ${vbHeight}`;
+
+  // Determine cursor based on state
   // Handle Alt key listeners for cursor feedback
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -48,14 +60,6 @@ export const SvgEditor: React.FC = () => {
     };
   }, []);
 
-  // Debería ser dinámico basado en el contenedor
-  const width = 1200;
-  const height = 800;
-
-  const vbWidth = width / viewport.zoom;
-  const vbHeight = height / viewport.zoom;
-  const viewBox = `${viewport.panX} ${viewport.panY} ${vbWidth} ${vbHeight}`;
-
   // Determine cursor based on state
   const getCursorClass = () => {
     if (isPanning) return "cursor-grabbing";
@@ -64,7 +68,7 @@ export const SvgEditor: React.FC = () => {
   };
 
   const onMouseDown = (e: React.MouseEvent) => {
-    // Si hay una herramienta de creación activa, colocamos el elemento
+    // If a creation tool is active, place the element
     if (activeTool !== "select" && svgRef.current) {
       const pos = screenToSVG(e.clientX, e.clientY, svgRef.current);
       if (activeTool === "addRow") addRow(pos);
@@ -106,7 +110,10 @@ export const SvgEditor: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full h-full overflow-hidden select-none bg-[#fefefe]">
+    <div
+      ref={containerRef}
+      className="relative w-full h-full overflow-hidden select-none bg-[#fefefe]"
+    >
       <svg
         ref={svgRef}
         width="100%"
