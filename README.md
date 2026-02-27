@@ -89,18 +89,24 @@ src/
 ├── domain/
 │   └── types.ts           # Tipos TypeScript del dominio
 ├── store/
-│   └── useSeatMapStore.ts # Estado global con Zustand
+│   ├── slices/            # Zustand slices (Map & UI)
+│   └── useSeatMapStore.ts # Store principal con persistencia y migración
 ├── services/
-│   ├── labeling/          # Parser de patrones de etiquetado
-│   ├── layout/            # Lógica trigonométrica de posicionamiento
-│   ├── persistence/       # Import/Export JSON con Zod
+│   ├── factory/           # Creación de elementos
+│   ├── labeling/          # Parser de patrones
+│   ├── layout/            # Algoritmos geométricos
+│   ├── persistence/       # Zod schemas y Repository
 │   ├── layoutService.ts   # Fragmento: Coordenadas y Layout
 │   ├── elementService.ts  # Fragmento: CRUD y Lógica de Negocio
 │   ├── sanitizationService.ts # Fragmento: Limpieza de inputs
 │   └── mapService.ts      # Fachada principal de servicios
 ├── hooks/
+│   ├── index.ts           # Barrel de hooks
 │   ├── useViewport.ts     # Control de cámara (zoom/pan)
-│   └── useElementInteraction.ts # Lógica de interacción SVG
+│   ├── useKeyboardShortcuts.ts # Atajos del sistema
+│   ├── useEditorShortcuts.ts # Atajos del editor
+│   ├── useElementInteraction.ts # Arrastre y selección
+│   └── useResizeObserver.ts # Adaptabilidad del canvas
 └── __tests__/             # Tests unitarios (Jest)
 ```
 
