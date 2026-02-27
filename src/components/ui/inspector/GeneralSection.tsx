@@ -1,8 +1,8 @@
 // src/components/ui/inspector/GeneralSection.tsx
 import React from "react";
 import { Type } from "lucide-react";
-import { MapElement, Seat, MAX_LABEL_LENGTHS } from "@/domain/types";
-import { strings } from "@/lib/i18n/strings";
+import { MapElement, Seat, MAX_LABEL_LENGTHS } from "@/domain";
+import { strings } from "@/lib";
 
 interface GeneralSectionProps {
   element: MapElement | Seat;

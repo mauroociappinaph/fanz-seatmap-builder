@@ -1,4 +1,4 @@
-export * from "./domain";
+export * from "./mapService";
 export * from "./factory";
 export * from "./labeling";
 export * from "./layout";

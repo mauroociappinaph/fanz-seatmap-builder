@@ -1,9 +1,9 @@
 // src/components/editor/elements/AreaComponent.tsx
 import React from "react";
-import { Area } from "@/domain/types";
+import { Area } from "@/domain";
 import { useSeatMapStore } from "@/store";
-import { useViewport } from "@/hooks/useViewport";
-import { strings } from "@/lib/i18n/strings";
+import { useViewport } from "@/hooks";
+import { strings } from "@/lib";
 
 interface AreaComponentProps {
   area: Area;

@@ -5,10 +5,9 @@ import {
   EditorState,
   Seat,
   MapElement,
-} from "@/domain/types";
-import { strings } from "@/lib/i18n/strings";
-import { ElementFactory } from "@/services/factory/elementFactory";
-import { MapService } from "@/services/domain/mapService";
+} from "@/domain";
+import { strings } from "@/lib";
+import { MapService, ElementFactory } from "@/services";
 
 export interface UISlice {
   selectedIds: string[];

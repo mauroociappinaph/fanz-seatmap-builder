@@ -5,7 +5,7 @@ import React from "react";
 import { useSeatMapStore } from "@/store";
 import { LayoutGrid, Circle, Square, MousePointer2 } from "lucide-react";
 import { clsx } from "clsx";
-import { strings } from "@/lib/i18n/strings";
+import { strings } from "@/lib";
 
 export const Toolbar: React.FC = () => {
   const { activeTool, setActiveTool, creationConfig, updateCreationConfig } =

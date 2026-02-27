@@ -1,10 +1,10 @@
 // src/components/editor/elements/TableComponent.tsx
 import React from "react";
-import { Table } from "@/domain/types";
+import { Table } from "@/domain";
 import { SeatComponent } from "./SeatComponent";
 import { useSeatMapStore } from "@/store";
-import { useViewport } from "@/hooks/useViewport";
-import { strings } from "@/lib/i18n/strings";
+import { useViewport } from "@/hooks";
+import { strings } from "@/lib";
 
 interface TableComponentProps {
   table: Table;

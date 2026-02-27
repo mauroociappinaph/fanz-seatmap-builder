@@ -1,6 +1,6 @@
 // src/services/persistence/jsonMapper.ts
 import { z } from "zod";
-import { SeatMap } from "@/domain/types";
+import { SeatMap } from "@/domain";
 
 const PositionSchema = z.object({
   x: z.number(),

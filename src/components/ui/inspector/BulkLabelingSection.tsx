@@ -2,7 +2,7 @@
 import React from "react";
 import { Hash } from "lucide-react";
 import { useSeatMapStore } from "@/store";
-import { strings } from "@/lib/i18n/strings";
+import { strings } from "@/lib";
 
 export const BulkLabelingSection: React.FC = () => {
   const applyBulkLabels = useSeatMapStore((state) => state.applyBulkLabels);

@@ -1,6 +1,6 @@
 // src/services/factory/elementFactory.ts
-import { Row, Table, Area, Position } from "../../domain/types";
-import { calculateTableSeatPositions } from "../layout/tableLayout";
+import { Row, Table, Area, Position } from "@/domain";
+import { calculateTableSeatPositions } from "../layout";
 
 export const ElementFactory = {
   createRow: (

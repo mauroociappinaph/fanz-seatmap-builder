@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { useViewport } from "@/hooks/useViewport";
+import { useViewport } from "@/hooks";
 import { useSeatMapStore } from "@/store";
 import { MapElements } from "./MapElements";
 import { clsx } from "clsx";

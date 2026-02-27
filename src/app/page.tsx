@@ -6,7 +6,7 @@ import { Toolbar, Inspector } from "@/components/ui";
 import { useSeatMapStore } from "@/store";
 import { Toaster, toast } from "sonner";
 import { useRef } from "react";
-import { strings } from "@/lib/i18n/strings";
+import { strings } from "@/lib";
 
 export default function Home() {
   const { selectedIds, removeElements, exportJSON, importJSON, newMap } =

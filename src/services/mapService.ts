@@ -1,12 +1,6 @@
-// src/services/domain/mapService.ts
-import {
-  MapElement,
-  MAX_LABEL_LENGTHS,
-  Row,
-  Table,
-  SeatMap,
-} from "../../domain/types";
-import { calculateTableSeatPositions } from "../layout/tableLayout";
+// src/services/mapService.ts
+import { MapElement, MAX_LABEL_LENGTHS, Row, Table, SeatMap } from "@/domain";
+import { calculateTableSeatPositions } from "./layout";
 
 export const MapService = {
   /**

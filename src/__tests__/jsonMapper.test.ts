@@ -1,9 +1,6 @@
 // src/__tests__/jsonMapper.test.ts
-import {
-  exportSeatMapToJSON,
-  importSeatMapFromJSON,
-} from "@/services/persistence/jsonMapper";
-import { SeatMap, Row } from "@/domain/types";
+import { exportSeatMapToJSON, importSeatMapFromJSON } from "@/services";
+import { SeatMap, Row } from "@/domain";
 
 describe("jsonMapper", () => {
   const mockSeatMap: SeatMap = {

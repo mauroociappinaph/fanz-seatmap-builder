@@ -1,8 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { EditorState, Row } from "@/domain/types";
-import { createMapSlice } from "./slices/mapSlice";
-import { createUISlice } from "./slices/uiSlice";
+import { EditorState, Row } from "@/domain";
+import { createMapSlice, createUISlice } from "./slices";
 
 export const useSeatMapStore = create<EditorState>()(
   persist(

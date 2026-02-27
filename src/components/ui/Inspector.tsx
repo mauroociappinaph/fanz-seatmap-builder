@@ -2,14 +2,16 @@
 
 import React from "react";
 import { useSeatMapStore } from "@/store";
-import { MapElement, Area, Position, Seat } from "@/domain/types";
+import { MapElement, Area, Position, Seat } from "@/domain";
 import { Hash, Settings2, Trash2 } from "lucide-react";
-import { strings } from "@/lib/i18n/strings";
+import { strings } from "@/lib";
 
-import { GeneralSection } from "./inspector/GeneralSection";
-import { LayoutSection } from "./inspector/LayoutSection";
-import { SpecificsSection } from "./inspector/SpecificsSection";
-import { BulkLabelingSection } from "./inspector/BulkLabelingSection";
+import {
+  GeneralSection,
+  LayoutSection,
+  SpecificsSection,
+  BulkLabelingSection,
+} from "./inspector/index";
 
 export const Inspector: React.FC = () => {
   const { seatMap, selectedIds, updateElement, moveElement, removeElements } =

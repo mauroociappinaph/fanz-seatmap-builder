@@ -6,12 +6,10 @@ import {
   MAX_LABEL_LENGTHS,
   Row,
   Table,
-} from "@/domain/types";
-import { parsePattern } from "@/services/labeling";
-import { SeatMapRepository } from "@/services/persistence/seatMapRepository";
-import { strings } from "@/lib/i18n/strings";
-import { MapService } from "@/services/domain/mapService";
-import { EditorState } from "@/domain/types";
+  EditorState,
+} from "@/domain";
+import { strings } from "@/lib";
+import { MapService, SeatMapRepository, parsePattern } from "@/services";
 
 export interface MapSlice {
   seatMap: SeatMap;

@@ -1,10 +1,10 @@
 // src/components/editor/elements/RowComponent.tsx
 import React from "react";
-import { Row } from "@/domain/types";
+import { Row } from "@/domain";
 import { SeatComponent } from "./SeatComponent";
 import { useSeatMapStore } from "@/store";
-import { useViewport } from "@/hooks/useViewport";
-import { strings } from "@/lib/i18n/strings";
+import { useViewport } from "@/hooks";
+import { strings } from "@/lib";
 
 interface RowComponentProps {
   row: Row;

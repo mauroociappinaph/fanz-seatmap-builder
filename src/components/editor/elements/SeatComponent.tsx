@@ -1,6 +1,6 @@
 // src/components/editor/elements/SeatComponent.tsx
 import React from "react";
-import { Seat } from "@/domain/types";
+import { Seat } from "@/domain";
 
 interface SeatComponentProps {
   seat: Seat;

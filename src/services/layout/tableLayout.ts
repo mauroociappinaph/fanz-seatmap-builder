@@ -1,4 +1,4 @@
-import { Table, Seat } from "../../domain/types";
+import { Table, Seat } from "@/domain";
 
 /**
  * Calculates the relative positions (cx, cy) for seats around a table

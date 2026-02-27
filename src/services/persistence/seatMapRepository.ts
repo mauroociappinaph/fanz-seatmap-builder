@@ -1,7 +1,7 @@
 // src/services/persistence/seatMapRepository.ts
-import { SeatMap } from "@/domain/types";
+import { SeatMap } from "@/domain";
 import { validateSeatMap } from "./jsonMapper";
-import { MapService } from "../domain/mapService";
+import { MapService } from "../mapService";
 
 export interface ISeatMapRepository {
   save(seatMap: SeatMap): void;

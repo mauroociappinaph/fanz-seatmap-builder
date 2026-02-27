@@ -1,8 +1,8 @@
 // src/components/ui/inspector/SpecificsSection.tsx
 import React from "react";
 import { Settings2 } from "lucide-react";
-import { MapElement, Seat, Row, Table } from "@/domain/types";
-import { strings } from "@/lib/i18n/strings";
+import { MapElement, Seat, Row, Table } from "@/domain";
+import { strings } from "@/lib";
 import { useSeatMapStore } from "@/store";
 
 interface SpecificsSectionProps {

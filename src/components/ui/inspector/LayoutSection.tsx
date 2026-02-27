@@ -1,8 +1,8 @@
 // src/components/ui/inspector/LayoutSection.tsx
 import React from "react";
 import { Move, RotateCw } from "lucide-react";
-import { MapElement, Seat } from "@/domain/types";
-import { strings } from "@/lib/i18n/strings";
+import { MapElement, Seat } from "@/domain";
+import { strings } from "@/lib";
 
 interface LayoutSectionProps {
   element: MapElement | Seat;
