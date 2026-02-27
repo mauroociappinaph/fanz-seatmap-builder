@@ -41,3 +41,10 @@ yarn-error.log*
 next-env.d.ts
 
 /VISUAL
+
+# AI session artifacts
+BUGS_AUDIT.md
+BUGS_VERIFICATION_REPORT.md
+
+# OS artifacts
+**/.DS_Store
