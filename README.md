@@ -1,6 +1,6 @@
-# Fanz SeatMapBuilder
+# SeatFlow Studio
 
-> Editor visual interactivo para diseñar mapas de asientos. Inspirado en [Seats.io](https://seats.io/).
+> Editor visual interactivo profesional para diseñar mapas de asientos. Inspirado en [Seats.io](https://seats.io/).
 
 ![Stack](https://img.shields.io/badge/Stack-Next.js%2016%20%2B%20TypeScript%20%2B%20React%2019-blue)
 ![Tests](https://img.shields.io/badge/Tests-Jest%20%2B%20Testing%20Library-green)
@@ -8,7 +8,7 @@
 
 ## 🎯 Descripción
 
-**SeatMapBuilder** es una aplicación frontend que permite crear y editar mapas de asientos de forma visual e intuitiva. Diseñado para venues, teatros, estadios y eventos que requieren gestión de espacios.
+**SeatFlow Studio** es una aplicación frontend profesional que permite crear y editar mapas de asientos de forma visual e intuitiva. Diseñado para venues, teatros, estadios y eventos que requieren gestión de espacios.
 
 ### Características Principales
 
@@ -310,10 +310,10 @@ MIT License - Ver [LICENSE](./LICENSE) para detalles.
 **Mauro Ociappina**
 
 - GitHub: [@mauroociappinaph](https://github.com/mauroociappinaph)
-- Proyecto: [fanz-seatmap-builder](https://github.com/mauroociappinaph/fanz-seatmap-builder)
+- Proyecto: [seatflow-studio](https://github.com/mauroociappinaph/fanz-seatmap-builder)
 
 ---
 
 <p align="center">
-  Desarrollado con ❤️ para Fanz
+  Desarrollado con ❤️ para SeatFlow Studio
 </p>

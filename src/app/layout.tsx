@@ -8,8 +8,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Fanz SeatMap Builder | Pro",
-  description: "Next-generation SVG Seat Map Editor for professional venues.",
+  title: "SeatFlow Studio | Professional Seat Map Editor",
+  description:
+    "Next-generation SVG Seat Map Editor for professional venues and events.",
 };
 
 export default function RootLayout({

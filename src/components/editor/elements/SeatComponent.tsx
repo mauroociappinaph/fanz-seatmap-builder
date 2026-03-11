@@ -22,7 +22,7 @@ const SeatComponentBase: React.FC<SeatComponentProps> = ({
       aria-label={`Seat ${seat.label}, status: ${seat.status}`}
       aria-pressed={isSelected}
       tabIndex={0}
-      focusable="true"
+      focusable="false"
       onMouseDown={(e) => {
         e.stopPropagation();
         onClick?.(e.ctrlKey || e.metaKey);

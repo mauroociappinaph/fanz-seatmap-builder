@@ -122,7 +122,7 @@ export default function Home() {
               </span>
             </div>
             <h1 className="text-lg font-semibold tracking-tight text-slate-800">
-              Fanz{" "}
+              SeatFlow{" "}
               <span className="text-blue-600 font-semibold">
                 {strings.nav.title}
               </span>

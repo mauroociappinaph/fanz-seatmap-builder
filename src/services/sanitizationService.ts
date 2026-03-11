@@ -11,7 +11,7 @@ export const SanitizationService = {
 
     // Remove control characters, non-printable ASCII and potentially dangerous symbols
     const cleanLabel = label
-      .replace(/[\x00-\x1F\x7F-\x9F]/g, "") // Remove control chars
+      .replace(/[\u0000-\u001F\u007F-\u009F]/g, "") // Remove control chars
       .trim()
       .replace(/^[,.\s]+/, "")
       .replace(/[,.\s]+$/, "");

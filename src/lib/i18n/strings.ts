@@ -13,7 +13,7 @@ export const strings = {
     success: "Éxito",
   },
   nav: {
-    title: "SeatMap",
+    title: "Studio",
     editor: "Editor",
     newMap: "Nuevo Mapa",
     import: "Importar JSON",

@@ -1,8 +1,8 @@
-# Fanz SeatMapBuilder - Especificación Técnica
+# SeatFlow Studio - Especificación Técnica
 
 ## 1. Visión General
 
-El **SeatMapBuilder** es una herramienta de edición visual diseñada para crear y gestionar mapas de asientos de alta fidelidad. Esta especificación detalla la arquitectura, el modelo de datos y las decisiones de diseño que sustentan la implementación del MVP.
+El **SeatFlow Studio** es una herramienta de edición visual profesional diseñada para crear y gestionar mapas de asientos de alta fidelidad. Esta especificación detalla la arquitectura, el modelo de datos y las decisiones de diseño que sustentan la implementación del MVP.
 
 ---
 

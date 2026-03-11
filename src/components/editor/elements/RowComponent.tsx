@@ -26,7 +26,7 @@ const RowComponentBase: React.FC<RowComponentProps> = ({ row }) => {
         }
       }}
       tabIndex={0}
-      focusable="true"
+      focusable="false"
       className="group cursor-move outline-none"
       role="group"
       aria-label={`${strings.elements.rowLabel} ${row.label}, ${row.seats.length} seats`}

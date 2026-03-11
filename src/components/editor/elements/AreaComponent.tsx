@@ -37,7 +37,7 @@ const AreaComponentBase: React.FC<AreaComponentProps> = ({ area }) => {
         }
       }}
       tabIndex={0}
-      focusable="true"
+      focusable="false"
       className="group cursor-move outline-none"
       role="region"
       aria-label={`${strings.elements.areaLabel} ${area.label}`}
